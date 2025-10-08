@@ -1,0 +1,114 @@
+/* IRANYekanWeb Font Family */
+
+@font-face {
+  font-family: 'IRANYekanWeb';
+  src: url('./eot/IRANYekanWebThin.eot');
+  src: url('./eot/IRANYekanWebThin.eot?#iefix') format('embedded-opentype'),
+       url('./woff2/IRANYekanWebThin.woff2') format('woff2'),
+       url('./woff/IRANYekanWebThin.woff') format('woff'),
+       url('./ttf/IRANYekanWebThin.ttf') format('truetype'),
+       url('./svg/iranyekanwebthin.svg#IRANYekanWebThin') format('svg');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANYekanWeb';
+  src: url('./eot/IRANYekanWebLight.eot');
+  src: url('./eot/IRANYekanWebLight.eot?#iefix') format('embedded-opentype'),
+       url('./woff2/IRANYekanWebLight.woff2') format('woff2'),
+       url('./woff/IRANYekanWebLight.woff') format('woff'),
+       url('./ttf/IRANYekanWebLight.ttf') format('truetype'),
+       url('./svg/iranyekanweblight.svg#IRANYekanWebLight') format('svg');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANYekanWeb';
+  src: url('./eot/IRANYekanWebRegular.eot');
+  src: url('./eot/IRANYekanWebRegular.eot?#iefix') format('embedded-opentype'),
+       url('./woff2/IRANYekanWebRegular.woff2') format('woff2'),
+       url('./woff/IRANYekanWebRegular.woff') format('woff'),
+       url('./ttf/IRANYekanWebRegular.ttf') format('truetype'),
+       url('./svg/IRANYekanWebRegular.svg#IRANYekanWebRegular') format('svg');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANYekanWeb';
+  src: url('./eot/IRANYekanWebMedium.eot');
+  src: url('./eot/IRANYekanWebMedium.eot?#iefix') format('embedded-opentype'),
+       url('./woff2/IRANYekanWebMedium.woff2') format('woff2'),
+       url('./woff/IRANYekanWebMedium.woff') format('woff'),
+       url('./ttf/IRANYekanWebMedium.ttf') format('truetype'),
+       url('./svg/iranyekanwebmedium.svg#IRANYekanWebMedium') format('svg');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANYekanWeb';
+  src: url('./eot/IRANYekanWebBold.eot');
+  src: url('./eot/IRANYekanWebBold.eot?#iefix') format('embedded-opentype'),
+       url('./woff2/IRANYekanWebBold.woff2') format('woff2'),
+       url('./woff/IRANYekanWebBold.woff') format('woff'),
+       url('./ttf/IRANYekanWebBold.ttf') format('truetype'),
+       url('./svg/iranyekanwebbold.svg#IRANYekanWebBold') format('svg');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANYekanWeb';
+  src: url('./eot/IRANYekanWebExtraBold.eot');
+  src: url('./eot/IRANYekanWebExtraBold.eot?#iefix') format('embedded-opentype'),
+       url('./woff2/IRANYekanWebExtraBold.woff2') format('woff2'),
+       url('./woff/IRANYekanWebExtraBold.woff') format('woff'),
+       url('./ttf/IRANYekanWebExtraBold.ttf') format('truetype'),
+       url('./svg/iranyekanwebextrabold.svg#IRANYekanWebExtraBold') format('svg');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANYekanWeb';
+  src: url('./eot/IRANYekanWebBlack.eot');
+  src: url('./eot/IRANYekanWebBlack.eot?#iefix') format('embedded-opentype'),
+       url('./woff2/IRANYekanWebBlack.woff2') format('woff2'),
+       url('./woff/IRANYekanWebBlack.woff') format('woff'),
+       url('./ttf/IRANYekanWebBlack.ttf') format('truetype'),
+       url('./svg/iranyekanwebblack.svg#IRANYekanWebBlack') format('svg');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANYekanWeb';
+  src: url('./eot/IRANYekanWebExtraBlack.eot');
+  src: url('./eot/IRANYekanWebExtraBlack.eot?#iefix') format('embedded-opentype'),
+       url('./woff2/IRANYekanWebExtraBlack.woff2') format('woff2'),
+       url('./woff/IRANYekanWebExtraBlack.woff') format('woff'),
+       url('./ttf/IRANYekanWebExtraBlack.ttf') format('truetype'),
+       url('./svg/iranyekanwebextrablack.svg#IRANYekanWebExtraBlack') format('svg');
+  font-weight: 950;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+
+
+
+
+
+
