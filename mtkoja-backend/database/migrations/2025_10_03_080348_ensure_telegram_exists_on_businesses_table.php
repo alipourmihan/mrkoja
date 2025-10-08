@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('businesses', function (Blueprint $table) {
-            if (!Schema::hasColumn('businesses', 'telegram')) {
-                $table->string('telegram')->nullable()->after('whatsapp');
-            }
-        });
+        if (Schema::hasTable('businesses')) {
+            Schema::table('businesses', function (Blueprint $table) {
+                if (!Schema::hasColumn('businesses', 'telegram')) {
+                    $table->string('telegram')->nullable()->after('whatsapp');
+                }
+            });
+        }
     }
 
     /**
