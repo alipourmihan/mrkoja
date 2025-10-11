@@ -12,11 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('provinces', function (Blueprint $table) {
-            $table->dropColumn('code');
+            if (Schema::hasColumn('provinces', 'code')) {
+                $table->dropColumn('code');
+            }
         });
         
         Schema::table('cities', function (Blueprint $table) {
-            $table->dropColumn('code');
+            if (Schema::hasColumn('cities', 'code')) {
+                $table->dropColumn('code');
+            }
         });
     }
 
@@ -26,11 +30,15 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('provinces', function (Blueprint $table) {
-            $table->string('code', 10)->unique();
+            if (!Schema::hasColumn('provinces', 'code')) {
+                $table->string('code', 10)->unique();
+            }
         });
         
         Schema::table('cities', function (Blueprint $table) {
-            $table->string('code', 10)->nullable();
+            if (!Schema::hasColumn('cities', 'code')) {
+                $table->string('code', 10)->nullable();
+            }
         });
     }
 };
