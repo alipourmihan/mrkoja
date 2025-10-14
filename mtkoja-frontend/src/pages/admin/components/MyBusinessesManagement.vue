@@ -231,10 +231,27 @@ const fetchMyBusinesses = async () => {
         'Authorization': `Bearer ${token}`
       }
     })
-    businesses.value = response.data.businesses.data || response.data.businesses
+    // Handle different response structures safely
+    if (response.data.businesses && response.data.businesses.data) {
+      businesses.value = response.data.businesses.data
+    } else if (Array.isArray(response.data.businesses)) {
+      businesses.value = response.data.businesses
+    } else if (Array.isArray(response.data)) {
+      businesses.value = response.data
+    } else {
+      businesses.value = []
+    }
   } catch (error) {
     console.error('Error fetching my businesses:', error)
-    alert('خطا در دریافت کسب‌وکارهای شما')
+    console.error('Error response:', error.response?.data)
+    console.error('Error status:', error.response?.status)
+    
+    // Check if response is HTML (offline page)
+    if (error.response?.data && typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE html>')) {
+      alert('خطا: سرور در دسترس نیست. لطفاً اطمینان حاصل کنید که سرور Laravel راه‌اندازی شده است.')
+    } else {
+      alert('خطا در دریافت کسب‌وکارهای شما: ' + (error.response?.data?.message || error.message))
+    }
   } finally {
     loading.value = false
   }

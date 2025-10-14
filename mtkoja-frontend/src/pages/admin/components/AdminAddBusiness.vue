@@ -787,7 +787,14 @@ const submitForm = async () => {
   } catch (error) {
     console.error('Error creating business:', error)
     console.error('Error response:', error.response?.data)
-    alert('خطا در ایجاد کسب و کار: ' + (error.response?.data?.message || error.message))
+    console.error('Error status:', error.response?.status)
+    
+    // Check if response is HTML (offline page)
+    if (error.response?.data && typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE html>')) {
+      alert('خطا: سرور در دسترس نیست. لطفاً اطمینان حاصل کنید که سرور Laravel راه‌اندازی شده است.')
+    } else {
+      alert('خطا در ایجاد کسب و کار: ' + (error.response?.data?.message || error.message))
+    }
   } finally {
     loading.value = false
   }

@@ -404,11 +404,26 @@ const fetchNeighborhoods = async () => {
   neighborhoodsLoading.value = true
   try {
     const response = await axios.get(`${API_BASE_URL}/neighborhoods`)
-    neighborhoods.value = response.data.neighborhoods || response.data
+    // Handle different response structures safely
+    if (response.data.neighborhoods) {
+      neighborhoods.value = response.data.neighborhoods
+    } else if (Array.isArray(response.data)) {
+      neighborhoods.value = response.data
+    } else {
+      neighborhoods.value = []
+    }
     console.log('Neighborhoods loaded:', neighborhoods.value)
   } catch (error) {
     console.error('Error fetching neighborhoods:', error)
-    alert('خطا در بارگذاری محله‌ها: ' + error.message)
+    console.error('Error response:', error.response?.data)
+    console.error('Error status:', error.response?.status)
+    
+    // Check if response is HTML (offline page)
+    if (error.response?.data && typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE html>')) {
+      alert('خطا: سرور در دسترس نیست. لطفاً اطمینان حاصل کنید که سرور Laravel راه‌اندازی شده است.')
+    } else {
+      alert('خطا در بارگذاری محله‌ها: ' + (error.response?.data?.message || error.message))
+    }
   } finally {
     neighborhoodsLoading.value = false
   }

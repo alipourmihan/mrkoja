@@ -421,11 +421,26 @@ const fetchCategories = async () => {
         'Content-Type': 'application/json'
       }
     })
-    categories.value = response.data.categories || response.data || []
+    // Handle different response structures safely
+    if (response.data.categories) {
+      categories.value = response.data.categories
+    } else if (Array.isArray(response.data)) {
+      categories.value = response.data
+    } else {
+      categories.value = []
+    }
     console.log('Categories loaded:', categories.value)
   } catch (error) {
     console.error('Error fetching categories:', error)
-    alert('خطا در دریافت لیست دسته‌بندی‌ها: ' + (error.response?.data?.message || error.message))
+    console.error('Error response:', error.response?.data)
+    console.error('Error status:', error.response?.status)
+    
+    // Check if response is HTML (offline page)
+    if (error.response?.data && typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE html>')) {
+      alert('خطا: سرور در دسترس نیست. لطفاً اطمینان حاصل کنید که سرور Laravel راه‌اندازی شده است.')
+    } else {
+      alert('خطا در دریافت لیست دسته‌بندی‌ها: ' + (error.response?.data?.message || error.message))
+    }
   } finally {
     categoriesLoading.value = false
   }

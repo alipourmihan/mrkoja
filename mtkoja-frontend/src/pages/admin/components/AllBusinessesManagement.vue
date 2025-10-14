@@ -436,14 +436,31 @@ const fetchBusinesses = async () => {
         'Content-Type': 'application/json'
       }
     })
-    businesses.value = response.data.businesses?.data || response.data.businesses || []
+    // Handle different response structures safely
+    if (response.data.businesses && response.data.businesses.data) {
+      businesses.value = response.data.businesses.data
+    } else if (Array.isArray(response.data.businesses)) {
+      businesses.value = response.data.businesses
+    } else if (Array.isArray(response.data)) {
+      businesses.value = response.data
+    } else {
+      businesses.value = []
+    }
     console.log('Businesses loaded:', businesses.value)
     if (businesses.value.length > 0) {
       console.log('First business images:', businesses.value[0].images)
     }
   } catch (error) {
     console.error('Error fetching businesses:', error)
-    alert('خطا در دریافت لیست کسب‌وکارها: ' + (error.response?.data?.message || error.message))
+    console.error('Error response:', error.response?.data)
+    console.error('Error status:', error.response?.status)
+    
+    // Check if response is HTML (offline page)
+    if (error.response?.data && typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE html>')) {
+      alert('خطا: سرور در دسترس نیست. لطفاً اطمینان حاصل کنید که سرور Laravel راه‌اندازی شده است.')
+    } else {
+      alert('خطا در دریافت لیست کسب‌وکارها: ' + (error.response?.data?.message || error.message))
+    }
   } finally {
     loading.value = false
   }
@@ -452,9 +469,22 @@ const fetchBusinesses = async () => {
 const fetchCategories = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/categories`)
-    categories.value = response.data
+    // Handle different response structures safely
+    if (response.data.categories) {
+      categories.value = response.data.categories
+    } else if (Array.isArray(response.data)) {
+      categories.value = response.data
+    } else {
+      categories.value = []
+    }
   } catch (error) {
     console.error('Error fetching categories:', error)
+    console.error('Error response:', error.response?.data)
+    
+    // Check if response is HTML (offline page)
+    if (error.response?.data && typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE html>')) {
+      console.error('خطا: سرور در دسترس نیست')
+    }
   }
 }
 

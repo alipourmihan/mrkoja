@@ -142,9 +142,23 @@ const fetchStats = async () => {
         'Authorization': `Bearer ${token}`
       }
     })
-    stats.value = response.data
+    // Handle different response structures safely
+    if (response.data.stats) {
+      stats.value = response.data.stats
+    } else if (response.data) {
+      stats.value = response.data
+    } else {
+      stats.value = {}
+    }
   } catch (error) {
     console.error('Error fetching stats:', error)
+    console.error('Error response:', error.response?.data)
+    console.error('Error status:', error.response?.status)
+    
+    // Check if response is HTML (offline page)
+    if (error.response?.data && typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE html>')) {
+      console.error('خطا: سرور در دسترس نیست')
+    }
   }
 }
 
@@ -155,10 +169,26 @@ const fetchPendingBusinesses = async () => {
     const response = await axios.get(`${API_BASE_URL}/admin/businesses?status=pending`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-    // ✅ اصلاح امن
-    pendingBusinesses.value = (response.data?.businesses?.data) || (response.data?.businesses) || []
+    // Handle different response structures safely
+    if (response.data.businesses && response.data.businesses.data) {
+      pendingBusinesses.value = response.data.businesses.data
+    } else if (Array.isArray(response.data.businesses)) {
+      pendingBusinesses.value = response.data.businesses
+    } else if (Array.isArray(response.data)) {
+      pendingBusinesses.value = response.data
+    } else {
+      pendingBusinesses.value = []
+    }
   } catch (error) {
     console.error('Error fetching pending businesses:', error)
+    console.error('Error response:', error.response?.data)
+    console.error('Error status:', error.response?.status)
+    
+    // Check if response is HTML (offline page)
+    if (error.response?.data && typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE html>')) {
+      console.error('خطا: سرور در دسترس نیست')
+    }
+    
     // Fallback
     try {
       const response = await axios.get(`${API_BASE_URL}/admin/businesses`, {

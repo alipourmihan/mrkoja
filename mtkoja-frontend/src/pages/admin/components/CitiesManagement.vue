@@ -404,11 +404,26 @@ const fetchCities = async () => {
   citiesLoading.value = true
   try {
     const response = await axios.get(`${API_BASE_URL}/cities`)
-    cities.value = response.data.cities || response.data
+    // Handle different response structures safely
+    if (response.data.cities) {
+      cities.value = response.data.cities
+    } else if (Array.isArray(response.data)) {
+      cities.value = response.data
+    } else {
+      cities.value = []
+    }
     console.log('Cities loaded:', cities.value)
   } catch (error) {
     console.error('Error fetching cities:', error)
-    alert('خطا در بارگذاری شهرها: ' + error.message)
+    console.error('Error response:', error.response?.data)
+    console.error('Error status:', error.response?.status)
+    
+    // Check if response is HTML (offline page)
+    if (error.response?.data && typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE html>')) {
+      alert('خطا: سرور در دسترس نیست. لطفاً اطمینان حاصل کنید که سرور Laravel راه‌اندازی شده است.')
+    } else {
+      alert('خطا در بارگذاری شهرها: ' + (error.response?.data?.message || error.message))
+    }
   } finally {
     citiesLoading.value = false
   }

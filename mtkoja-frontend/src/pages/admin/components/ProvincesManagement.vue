@@ -392,11 +392,26 @@ const fetchProvinces = async () => {
   provincesLoading.value = true
   try {
     const response = await axios.get(`${API_BASE_URL}/provinces`)
-    provinces.value = response.data.provinces || response.data
+    // Handle different response structures safely
+    if (response.data.provinces) {
+      provinces.value = response.data.provinces
+    } else if (Array.isArray(response.data)) {
+      provinces.value = response.data
+    } else {
+      provinces.value = []
+    }
     console.log('Provinces loaded:', provinces.value)
   } catch (error) {
     console.error('Error fetching provinces:', error)
-    alert('خطا در بارگذاری استان‌ها: ' + error.message)
+    console.error('Error response:', error.response?.data)
+    console.error('Error status:', error.response?.status)
+    
+    // Check if response is HTML (offline page)
+    if (error.response?.data && typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE html>')) {
+      alert('خطا: سرور در دسترس نیست. لطفاً اطمینان حاصل کنید که سرور Laravel راه‌اندازی شده است.')
+    } else {
+      alert('خطا در بارگذاری استان‌ها: ' + (error.response?.data?.message || error.message))
+    }
   } finally {
     provincesLoading.value = false
   }
