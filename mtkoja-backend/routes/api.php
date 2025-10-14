@@ -84,6 +84,48 @@ Route::get('/neighborhoods', [LocationController::class, 'getNeighborhoods']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// User management routes (outside middleware for testing)
+Route::get('/admin/users', [AuthController::class, 'getAllUsers']);
+Route::post('/admin/users', [AuthController::class, 'createUser']);
+Route::get('/admin/users/{user}', [AuthController::class, 'getUser']);
+Route::put('/admin/users/{user}', [AuthController::class, 'updateUser']);
+Route::delete('/admin/users/{user}', [AuthController::class, 'deleteUser']);
+Route::get('/admin/users/{user}/businesses', [AuthController::class, 'getUserBusinesses']);
+
+// Location management routes (outside middleware for testing)
+Route::post('/provinces', [LocationController::class, 'createProvince']);
+Route::put('/provinces/{province}', [LocationController::class, 'updateProvince']);
+Route::delete('/provinces/{id}', [LocationController::class, 'deleteProvince']);
+Route::post('/cities', [LocationController::class, 'createCity']);
+Route::put('/cities/{city}', [LocationController::class, 'updateCity']);
+Route::delete('/cities/{id}', [LocationController::class, 'deleteCity']);
+Route::post('/neighborhoods', [LocationController::class, 'createNeighborhood']);
+Route::put('/neighborhoods/{neighborhood}', [LocationController::class, 'updateNeighborhood']);
+Route::delete('/neighborhoods/{id}', [LocationController::class, 'deleteNeighborhood']);
+
+// Category management routes (outside middleware for testing)
+Route::post('/categories', [LocationController::class, 'createCategory']);
+Route::put('/categories/{category}', [LocationController::class, 'updateCategory']);
+Route::delete('/categories/{category}', [LocationController::class, 'deleteCategory']);
+
+// Business management routes (outside middleware for testing)
+Route::post('/admin/businesses', [BusinessController::class, 'adminStore']);
+Route::put('/admin/businesses/{id}', [BusinessController::class, 'adminUpdate']);
+Route::delete('/admin/businesses/{id}', [BusinessController::class, 'destroy']);
+Route::put('/admin/businesses/{id}/approve', [BusinessController::class, 'approve']);
+Route::put('/admin/businesses/{id}/reject', [BusinessController::class, 'reject']);
+
+// SEO management routes (outside middleware for testing)
+Route::post('/admin/seo-pages', [SeoPageController::class, 'store']);
+Route::put('/admin/seo-pages/{seoPage}', [SeoPageController::class, 'update']);
+Route::delete('/admin/seo-pages/{seoPage}', [SeoPageController::class, 'destroy']);
+Route::post('/admin/seo/generate-business/{business}', [SeoAdminController::class, 'generateBusinessSeo']);
+Route::post('/admin/seo/generate-category/{category}', [SeoAdminController::class, 'generateCategorySeo']);
+Route::post('/admin/seo/generate-bulk', [SeoAdminController::class, 'generateBulkSeo']);
+Route::post('/admin/seo/validate', [SeoAdminController::class, 'validateSeo']);
+Route::post('/admin/seo/generate-sitemap', [SeoAdminController::class, 'generateSitemap']);
+Route::post('/admin/seo/generate-robots', [SeoAdminController::class, 'generateRobotsTxt']);
+
 // Protected routes - temporarily without authentication for testing
 Route::group([], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -109,48 +151,24 @@ Route::group([], function () {
     Route::group([], function () {
         // Categories management
         Route::get('/admin/categories', [LocationController::class, 'getCategories']);
-        Route::post('/categories', [LocationController::class, 'createCategory']);
-        Route::put('/categories/{category}', [LocationController::class, 'updateCategory']);
-        Route::delete('/categories/{category}', [LocationController::class, 'deleteCategory']);
         
         // Provinces management
-        Route::post('/provinces', [LocationController::class, 'createProvince']);
-        Route::put('/provinces/{province}', [LocationController::class, 'updateProvince']);
-        Route::delete('/provinces/{id}', [LocationController::class, 'deleteProvince']);
+        Route::get('/provinces', [LocationController::class, 'getProvinces']);
         
         // Cities management
-        Route::post('/cities', [LocationController::class, 'createCity']);
-        Route::put('/cities/{city}', [LocationController::class, 'updateCity']);
-        Route::delete('/cities/{id}', [LocationController::class, 'deleteCity']);
+        Route::get('/cities', [LocationController::class, 'getCities']);
         
         // Neighborhoods management
-        Route::post('/neighborhoods', [LocationController::class, 'createNeighborhood']);
-        Route::put('/neighborhoods/{neighborhood}', [LocationController::class, 'updateNeighborhood']);
-        Route::delete('/neighborhoods/{id}', [LocationController::class, 'deleteNeighborhood']);
+        Route::get('/neighborhoods', [LocationController::class, 'getNeighborhoods']);
         
         // Business management
         Route::get('/admin/businesses', [BusinessController::class, 'adminIndex']);
-        Route::post('/admin/businesses', [BusinessController::class, 'adminStore']);
         Route::get('/admin/businesses/{id}', [BusinessController::class, 'adminShow']);
-        Route::put('/admin/businesses/{id}', [BusinessController::class, 'adminUpdate']);
-        Route::delete('/admin/businesses/{id}', [BusinessController::class, 'destroy']);
-        Route::put('/admin/businesses/{id}/approve', [BusinessController::class, 'approve']);
-        Route::put('/admin/businesses/{id}/reject', [BusinessController::class, 'reject']);
         Route::get('/admin/stats', [BusinessController::class, 'stats']);
-        // User management
-        Route::get('/admin/users', [AuthController::class, 'getAllUsers']);
-        Route::post('/admin/users', [AuthController::class, 'createUser']);
-        Route::get('/admin/users/{user}', [AuthController::class, 'getUser']);
-        Route::put('/admin/users/{user}', [AuthController::class, 'updateUser']);
-        Route::delete('/admin/users/{user}', [AuthController::class, 'deleteUser']);
-        Route::get('/admin/users/{user}/businesses', [AuthController::class, 'getUserBusinesses']);
-
+        // User management routes moved outside middleware group
         // SEO Pages management
         Route::get('/admin/seo-pages', [SeoPageController::class, 'index']);
-        Route::post('/admin/seo-pages', [SeoPageController::class, 'store']);
         Route::get('/admin/seo-pages/{seoPage}', [SeoPageController::class, 'show']);
-        Route::put('/admin/seo-pages/{seoPage}', [SeoPageController::class, 'update']);
-        Route::delete('/admin/seo-pages/{seoPage}', [SeoPageController::class, 'destroy']);
 
         // SEO Management
         Route::get('/admin/seo/dashboard', [SeoAdminController::class, 'dashboard']);
@@ -160,12 +178,6 @@ Route::group([], function () {
         Route::get('/admin/seo/reports', [SeoAdminController::class, 'getSeoReports']);
         Route::get('/admin/seo/businesses-without-seo', [SeoAdminController::class, 'businessesWithoutSeo']);
         Route::get('/admin/seo/categories-without-seo', [SeoAdminController::class, 'categoriesWithoutSeo']);
-        Route::post('/admin/seo/generate-business/{business}', [SeoAdminController::class, 'generateBusinessSeo']);
-        Route::post('/admin/seo/generate-category/{category}', [SeoAdminController::class, 'generateCategorySeo']);
-        Route::post('/admin/seo/generate-bulk', [SeoAdminController::class, 'generateBulkSeo']);
-        Route::post('/admin/seo/validate', [SeoAdminController::class, 'validateSeo']);
-        Route::post('/admin/seo/generate-sitemap', [SeoAdminController::class, 'generateSitemap']);
-        Route::post('/admin/seo/generate-robots', [SeoAdminController::class, 'generateRobotsTxt']);
     });
 });
 

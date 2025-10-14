@@ -108,26 +108,33 @@ class LocationController extends Controller
      */
     public function createProvince(Request $request): JsonResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:provinces,slug',
-            'name_en' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string|max:500',
-            'meta_keywords' => 'nullable|string|max:500',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-            'is_active' => 'boolean',
-            'sort_order' => 'integer'
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'slug' => 'nullable|string|max:255|unique:provinces,slug',
+                'name_en' => 'nullable|string|max:255',
+                'description' => 'nullable|string',
+                'meta_title' => 'nullable|string|max:255',
+                'meta_description' => 'nullable|string|max:500',
+                'meta_keywords' => 'nullable|string|max:500',
+                'latitude' => 'nullable|numeric',
+                'longitude' => 'nullable|numeric',
+                'is_active' => 'boolean',
+                'sort_order' => 'integer'
+            ]);
 
-        $province = Province::create($request->all());
+            $province = Province::create($request->all());
 
-        return response()->json([
-            'message' => 'استان با موفقیت ایجاد شد',
-            'province' => $province
-        ], 201);
+            return response()->json([
+                'message' => 'استان با موفقیت ایجاد شد',
+                'province' => $province
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'خطا در ایجاد استان',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

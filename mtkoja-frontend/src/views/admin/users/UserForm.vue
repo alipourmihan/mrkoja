@@ -491,7 +491,11 @@ const handleSubmit = async () => {
     const response = await fetch(url, {
       method,
       body: formData,
-      headers: getAuthHeadersForUpload()
+      headers: {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        ...(localStorage.getItem('token') && { 'Authorization': `Bearer ${localStorage.getItem('token')}` })
+      }
     })
     
     if (!response.ok) {

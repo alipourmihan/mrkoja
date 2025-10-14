@@ -156,64 +156,69 @@ class AuthController extends Controller
 
     public function createUser(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-            'role' => 'required|in:user,business_owner,admin',
-            'status' => 'required|in:active,inactive,suspended',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:500',
-            'gender' => 'nullable|in:male,female,other',
-            'department' => 'nullable|string|max:100',
-            'notes' => 'nullable|string|max:1000',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:6',
+                'role' => 'required|in:user,business_owner,admin',
+                'status' => 'sometimes|in:active,inactive,suspended',
+                'phone' => 'nullable|string|max:20',
+                'address' => 'nullable|string|max:500',
+                'gender' => 'nullable|in:male,female,other',
+                'department' => 'nullable|string|max:100',
+                'notes' => 'nullable|string|max:1000',
+            ]);
 
-        if ($validator->fails()) {
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Validation errors',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $userData = [
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => $request->role,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'status' => $request->status ?? 'active',
+            ];
+
+            // Add optional fields if provided
+            if ($request->has('gender')) {
+                $userData['gender'] = $request->gender;
+            }
+            if ($request->has('department')) {
+                $userData['department'] = $request->department;
+            }
+            if ($request->has('notes')) {
+                $userData['notes'] = $request->notes;
+            }
+
+            $user = User::create($userData);
+
+            // Handle avatar upload if provided
+            if ($request->hasFile('avatar')) {
+                $avatar = $request->file('avatar');
+                $filename = time() . '_' . $avatar->getClientOriginalName();
+                $avatar->storeAs('public/avatars', $filename);
+                $user->avatar = $filename;
+                $user->save();
+            }
+
             return response()->json([
-                'message' => 'Validation errors',
-                'errors' => $validator->errors()
-            ], 422);
+                'message' => 'User created successfully',
+                'user' => $user
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error creating user',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $userData = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-            'phone' => $request->phone,
-            'address' => $request->address,
-        ];
-
-        // Add optional fields if provided
-        if ($request->has('gender')) {
-            $userData['gender'] = $request->gender;
-        }
-        if ($request->has('department')) {
-            $userData['department'] = $request->department;
-        }
-        if ($request->has('notes')) {
-            $userData['notes'] = $request->notes;
-        }
-        if ($request->has('status')) {
-            $userData['status'] = $request->status;
-        }
-
-        $user = User::create($userData);
-
-        // Handle avatar upload if provided
-        if ($request->hasFile('avatar')) {
-            $avatar = $request->file('avatar');
-            $filename = time() . '_' . $avatar->getClientOriginalName();
-            $avatar->storeAs('public/avatars', $filename);
-            $user->avatar = $filename;
-            $user->save();
-        }
-
-        return response()->json([
-            'message' => 'User created successfully',
-            'user' => $user
-        ], 201);
     }
 
     public function getUser(Request $request, User $user)

@@ -31,26 +31,33 @@ class SeoPageController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'province_id' => 'nullable|exists:provinces,id',
-            'city_id' => 'nullable|exists:cities,id',
-            'neighborhood_id' => 'nullable|exists:neighborhoods,id',
-            'title' => 'required|string|max:255',
-            'meta_description' => 'nullable|string|max:500',
-            'h1' => 'nullable|string|max:255',
-            'content' => 'nullable|string',
-            'og_image' => 'nullable|string|max:500',
-            'custom_text' => 'nullable|string',
-            'keywords' => 'nullable|string|max:500',
-        ]);
+        try {
+            $request->validate([
+                'category_id' => 'required|exists:categories,id',
+                'province_id' => 'nullable|exists:provinces,id',
+                'city_id' => 'nullable|exists:cities,id',
+                'neighborhood_id' => 'nullable|exists:neighborhoods,id',
+                'title' => 'required|string|max:255',
+                'meta_description' => 'nullable|string|max:500',
+                'h1' => 'nullable|string|max:255',
+                'content' => 'nullable|string',
+                'og_image' => 'nullable|string|max:500',
+                'custom_text' => 'nullable|string',
+                'keywords' => 'nullable|string|max:500',
+            ]);
 
-        $seoPage = SeoPage::create($request->all());
+            $seoPage = SeoPage::create($request->all());
 
-        return response()->json([
-            'message' => 'صفحه SEO با موفقیت ایجاد شد',
-            'data' => $seoPage->load(['category', 'province', 'city', 'neighborhood'])
-        ], 201);
+            return response()->json([
+                'message' => 'صفحه SEO با موفقیت ایجاد شد',
+                'data' => $seoPage->load(['category', 'province', 'city', 'neighborhood'])
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'خطا در ایجاد صفحه SEO',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

@@ -328,20 +328,27 @@ class SeoAdminController extends Controller
      */
     public function generateBusinessSeo(Business $business): JsonResponse
     {
-        $business->update([
-            'meta_title' => $this->seoService->generateBusinessMetaTitle($business),
-            'meta_description' => $this->seoService->generateBusinessMetaDescription($business),
-            'meta_keywords' => $this->seoService->generateBusinessKeywords($business),
-            'og_title' => $this->seoService->generateBusinessMetaTitle($business),
-            'og_description' => $this->seoService->generateBusinessMetaDescription($business),
-            'twitter_title' => $this->seoService->generateBusinessMetaTitle($business),
-            'twitter_description' => $this->seoService->generateBusinessMetaDescription($business),
-        ]);
+        try {
+            $business->update([
+                'meta_title' => $this->seoService->generateBusinessMetaTitle($business),
+                'meta_description' => $this->seoService->generateBusinessMetaDescription($business),
+                'meta_keywords' => $this->seoService->generateBusinessKeywords($business),
+                'og_title' => $this->seoService->generateBusinessMetaTitle($business),
+                'og_description' => $this->seoService->generateBusinessMetaDescription($business),
+                'twitter_title' => $this->seoService->generateBusinessMetaTitle($business),
+                'twitter_description' => $this->seoService->generateBusinessMetaDescription($business),
+            ]);
 
-        return response()->json([
-            'message' => 'SEO برای کسب‌وکار با موفقیت تولید شد',
-            'business' => $business->fresh()
-        ]);
+            return response()->json([
+                'message' => 'SEO برای کسب‌وکار با موفقیت تولید شد',
+                'business' => $business->fresh()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'خطا در تولید SEO برای کسب‌وکار',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -349,21 +356,28 @@ class SeoAdminController extends Controller
      */
     public function generateCategorySeo(Category $category): JsonResponse
     {
-        $category->update([
-            'meta_title' => $this->seoService->generateCategoryMetaTitle($category),
-            'meta_description' => $this->seoService->generateCategoryMetaDescription($category),
-            'meta_keywords' => $this->seoService->generateCategoryKeywords($category),
-            'og_title' => $this->seoService->generateCategoryMetaTitle($category),
-            'og_description' => $this->seoService->generateCategoryMetaDescription($category),
-            'twitter_title' => $this->seoService->generateCategoryMetaTitle($category),
-            'twitter_description' => $this->seoService->generateCategoryMetaDescription($category),
-            'h1' => $category->name,
-        ]);
+        try {
+            $category->update([
+                'meta_title' => $this->seoService->generateCategoryMetaTitle($category),
+                'meta_description' => $this->seoService->generateCategoryMetaDescription($category),
+                'meta_keywords' => $this->seoService->generateCategoryKeywords($category),
+                'og_title' => $this->seoService->generateCategoryMetaTitle($category),
+                'og_description' => $this->seoService->generateCategoryMetaDescription($category),
+                'twitter_title' => $this->seoService->generateCategoryMetaTitle($category),
+                'twitter_description' => $this->seoService->generateCategoryMetaDescription($category),
+                'h1' => $category->name,
+            ]);
 
-        return response()->json([
-            'message' => 'SEO برای دسته‌بندی با موفقیت تولید شد',
-            'category' => $category->fresh()
-        ]);
+            return response()->json([
+                'message' => 'SEO برای دسته‌بندی با موفقیت تولید شد',
+                'category' => $category->fresh()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'خطا در تولید SEO برای دسته‌بندی',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -371,36 +385,44 @@ class SeoAdminController extends Controller
      */
     public function generateBulkSeo(Request $request): JsonResponse
     {
-        $type = $request->input('type'); // 'businesses' or 'categories'
-        $ids = $request->input('ids', []);
+        try {
+            $type = $request->input('type'); // 'businesses' or 'categories'
+            $ids = $request->input('ids', []);
 
-        $updated = 0;
+            $updated = 0;
 
-        if ($type === 'businesses') {
-            $businesses = Business::whereIn('id', $ids)->get();
-            foreach ($businesses as $business) {
-                $business->update([
-                    'meta_title' => $this->seoService->generateBusinessMetaTitle($business),
-                    'meta_description' => $this->seoService->generateBusinessMetaDescription($business),
-                    'meta_keywords' => $this->seoService->generateBusinessKeywords($business),
-                ]);
-                $updated++;
+            if ($type === 'businesses') {
+                $businesses = Business::whereIn('id', $ids)->get();
+                foreach ($businesses as $business) {
+                    $business->update([
+                        'meta_title' => $this->seoService->generateBusinessMetaTitle($business),
+                        'meta_description' => $this->seoService->generateBusinessMetaDescription($business),
+                        'meta_keywords' => $this->seoService->generateBusinessKeywords($business),
+                    ]);
+                    $updated++;
+                }
+            } elseif ($type === 'categories') {
+                $categories = Category::whereIn('id', $ids)->get();
+                foreach ($categories as $category) {
+                    $category->update([
+                        'meta_title' => $this->seoService->generateCategoryMetaTitle($category),
+                        'meta_description' => $this->seoService->generateCategoryMetaDescription($category),
+                        'meta_keywords' => $this->seoService->generateCategoryKeywords($category),
+                    ]);
+                    $updated++;
+                }
             }
-        } elseif ($type === 'categories') {
-            $categories = Category::whereIn('id', $ids)->get();
-            foreach ($categories as $category) {
-                $category->update([
-                    'meta_title' => $this->seoService->generateCategoryMetaTitle($category),
-                    'meta_description' => $this->seoService->generateCategoryMetaDescription($category),
-                    'meta_keywords' => $this->seoService->generateCategoryKeywords($category),
-                ]);
-                $updated++;
-            }
+
+            return response()->json([
+                'message' => "SEO برای {$updated} مورد با موفقیت تولید شد",
+                'updated_count' => $updated
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'خطا در تولید انبوه SEO',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'message' => "SEO برای {$updated} مورد با موفقیت تولید شد"
-        ]);
     }
 
     /**
@@ -408,26 +430,36 @@ class SeoAdminController extends Controller
      */
     public function validateSeo(Request $request): JsonResponse
     {
-        $type = $request->input('type');
-        $id = $request->input('id');
+        try {
+            $type = $request->input('type');
+            $id = $request->input('id');
 
-        $validation = [
-            'type' => $type,
-            'id' => $id,
-            'issues' => [],
-            'score' => 100,
-            'recommendations' => []
-        ];
+            $validation = [
+                'type' => $type,
+                'id' => $id,
+                'issues' => [],
+                'score' => 100,
+                'recommendations' => []
+            ];
 
-        if ($type === 'business') {
-            $business = Business::findOrFail($id);
-            $this->validateBusinessSeo($business, $validation);
-        } elseif ($type === 'category') {
-            $category = Category::findOrFail($id);
-            $this->validateCategorySeo($category, $validation);
+            if ($type === 'business') {
+                $business = Business::findOrFail($id);
+                $this->validateBusinessSeo($business, $validation);
+            } elseif ($type === 'category') {
+                $category = Category::findOrFail($id);
+                $this->validateCategorySeo($category, $validation);
+            }
+
+            return response()->json([
+                'message' => 'اعتبارسنجی SEO انجام شد',
+                'validation' => $validation
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'خطا در اعتبارسنجی SEO',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json($validation);
     }
 
     /**
@@ -552,35 +584,42 @@ class SeoAdminController extends Controller
      */
     public function generateSitemap(): JsonResponse
     {
-        $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+        try {
+            $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+            $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
-        // صفحه اصلی
-        $sitemap .= $this->generateSitemapUrl('/', '1.0', 'daily');
+            // صفحه اصلی
+            $sitemap .= $this->generateSitemapUrl('/', '1.0', 'daily');
 
-        // صفحات دسته‌بندی
-        $categories = Category::where('is_active', true)->get();
-        foreach ($categories as $category) {
-            $sitemap .= $this->generateSitemapUrl("/b/{$category->slug}", '0.8', 'weekly');
+            // صفحات دسته‌بندی
+            $categories = Category::where('is_active', true)->get();
+            foreach ($categories as $category) {
+                $sitemap .= $this->generateSitemapUrl("/b/{$category->slug}", '0.8', 'weekly');
+            }
+
+            // صفحات کسب‌وکار
+            $businesses = Business::where('status', 'approved')
+                ->where('is_active', true)
+                ->where('is_indexed', true)
+                ->get();
+            foreach ($businesses as $business) {
+                $sitemap .= $this->generateSitemapUrl("/business/{$business->slug}", '0.6', 'monthly');
+            }
+
+            $sitemap .= '</urlset>';
+
+            Storage::disk('public')->put('sitemap.xml', $sitemap);
+
+            return response()->json([
+                'message' => 'Sitemap با موفقیت تولید شد',
+                'url' => url('storage/sitemap.xml')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'خطا در تولید Sitemap',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // صفحات کسب‌وکار
-        $businesses = Business::where('status', 'approved')
-            ->where('is_active', true)
-            ->where('is_indexed', true)
-            ->get();
-        foreach ($businesses as $business) {
-            $sitemap .= $this->generateSitemapUrl("/business/{$business->slug}", '0.6', 'monthly');
-        }
-
-        $sitemap .= '</urlset>';
-
-        Storage::disk('public')->put('sitemap.xml', $sitemap);
-
-        return response()->json([
-            'message' => 'Sitemap با موفقیت تولید شد',
-            'url' => url('storage/sitemap.xml')
-        ]);
     }
 
     /**
