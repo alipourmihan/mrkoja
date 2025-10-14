@@ -265,7 +265,7 @@ import axios from 'axios'
 const router = useRouter()
 const route = useRoute()
 
-const API_BASE_URL = 'http://localhost:8000/api'
+const API_BASE_URL = 'https://mrkoja.com/api'
 
 // State
 const loading = ref(false)
@@ -552,8 +552,8 @@ const getBusinessImages = () => {
 const getImageUrl = (imageUrl) => {
   if (!imageUrl || typeof imageUrl !== 'string') return ''
   if (imageUrl.startsWith('http')) return imageUrl
-  if (imageUrl.startsWith('/storage/')) return `http://localhost:8000${imageUrl}`
-  return `http://localhost:8000/storage/${imageUrl}`
+  if (imageUrl.startsWith('/storage/')) return `https://mrkoja.com${imageUrl}`
+  return `https://mrkoja.com/storage/${imageUrl}`
 }
 
 const handleImageError = (event) => {

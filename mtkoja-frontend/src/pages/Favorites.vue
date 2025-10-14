@@ -89,7 +89,7 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
 const favorites = ref([])
-const API_BASE_URL = 'http://localhost:8000/api'
+const API_BASE_URL = 'https://mrkoja.com/api'
 
 const fetchFavorites = async () => {
   try {

@@ -213,7 +213,7 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
-const API_BASE_URL = 'http://localhost:8000/api'
+const API_BASE_URL = 'https://mrkoja.com/api'
 
 // State
 const businesses = ref([])

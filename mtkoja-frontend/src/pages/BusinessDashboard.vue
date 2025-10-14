@@ -162,7 +162,7 @@ import axios from 'axios'
 const myBusinesses = ref([])
 const loading = ref(false)
 
-const API_BASE_URL = 'http://localhost:8000/api'
+const API_BASE_URL = 'https://mrkoja.com/api'
 
 const approvedCount = computed(() => {
   return myBusinesses.value.filter(b => b.status === 'approved').length

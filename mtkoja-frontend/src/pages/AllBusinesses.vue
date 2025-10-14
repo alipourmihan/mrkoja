@@ -233,7 +233,7 @@ const sortBy = ref('created_at')
 const pagination = ref(null)
 const totalBusinesses = ref(0)
 
-const API_BASE_URL = 'http://localhost:8000/api'
+const API_BASE_URL = 'https://mrkoja.com/api'
 
 // Computed
 const visiblePages = computed(() => {
@@ -381,9 +381,9 @@ const getBusinessImage = (business) => {
     if (imageUrl.startsWith('http')) {
       return imageUrl
     } else if (imageUrl.startsWith('/storage/')) {
-      return `http://localhost:8000${imageUrl}`
+      return `https://mrkoja.com${imageUrl}`
     } else {
-      return `http://localhost:8000/storage/${imageUrl}`
+      return `https://mrkoja.com/storage/${imageUrl}`
     }
   }
   return null

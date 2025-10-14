@@ -272,7 +272,7 @@ const featuredBusinesses = ref([])
 const stats = ref({})
 const loading = ref(false)
 
-const API_BASE_URL = 'http://localhost:8000/api'
+const API_BASE_URL = 'https://mrkoja.com/api'
 
 // SEO Route Detection
 const isSeoRoute = computed(() => {
@@ -366,9 +366,9 @@ const getBusinessImage = (business) => {
     if (imageUrl.startsWith('http')) {
       return imageUrl
     } else if (imageUrl.startsWith('/storage/')) {
-      return `http://localhost:8000${imageUrl}`
+      return `https://mrkoja.com${imageUrl}`
     } else {
-      return `http://localhost:8000/storage/${imageUrl}`
+      return `https://mrkoja.com/storage/${imageUrl}`
     }
   }
   
@@ -379,9 +379,9 @@ const getBusinessImage = (business) => {
     if (imageUrl.startsWith('http')) {
       return imageUrl
     } else if (imageUrl.startsWith('/storage/')) {
-      return `http://localhost:8000${imageUrl}`
+      return `https://mrkoja.com${imageUrl}`
     } else {
-      return `http://localhost:8000/storage/${imageUrl}`
+      return `https://mrkoja.com/storage/${imageUrl}`
     }
   }
   

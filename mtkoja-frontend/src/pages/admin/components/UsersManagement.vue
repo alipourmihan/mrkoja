@@ -208,7 +208,7 @@ import axios from 'axios'
 
 const router = useRouter()
 
-const API_BASE_URL = 'http://localhost:8000/api'
+const API_BASE_URL = 'https://mrkoja.com/api'
 
 // State
 const users = ref([])
@@ -395,7 +395,7 @@ const getAvatarUrl = (avatar) => {
       return avatar
     }
     // اگر avatar فقط نام فایل است
-    return `http://localhost:8000/storage/avatars/${avatar}`
+    return `https://mrkoja.com/storage/avatars/${avatar}`
   } catch (error) {
     return null
   }

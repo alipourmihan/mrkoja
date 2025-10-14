@@ -441,7 +441,7 @@ const route = useRoute()
 const router = useRouter()
 const seoStore = useSeoStore()
 
-const API_BASE_URL = 'http://localhost:8000/api'
+const API_BASE_URL = 'https://mrkoja.com/api'
 
 // Reactive data
 const loading = ref(true)
