@@ -20,7 +20,14 @@ export const useCategoryStore = defineStore('category', {
       this.loading = true
       try {
         const response = await axios.get(`${API_BASE_URL}/categories`)
-        this.categories = response.data.categories
+        // Handle different response structures safely
+        if (response.data.categories) {
+          this.categories = response.data.categories
+        } else if (Array.isArray(response.data)) {
+          this.categories = response.data
+        } else {
+          this.categories = []
+        }
         return { success: true }
       } catch (error) {
         console.error('Error fetching categories:', error)

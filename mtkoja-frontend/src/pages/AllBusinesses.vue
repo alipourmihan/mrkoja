@@ -284,30 +284,22 @@ const loadBusinesses = async (page = 1) => {
       pagination: response.data.pagination
     })
     
-    // Handle different response structures
-    if (response.data.data) {
+    // Handle different response structures safely
+    if (response.data.businesses && response.data.businesses.data) {
       // Laravel pagination structure
+      businesses.value = response.data.businesses.data
+      pagination.value = response.data.businesses
+      totalBusinesses.value = response.data.businesses.total || response.data.businesses.data.length
+    } else if (Array.isArray(response.data.businesses)) {
+      // Direct businesses array
+      businesses.value = response.data.businesses
+      pagination.value = response.data.pagination || null
+      totalBusinesses.value = response.data.businesses.length
+    } else if (response.data.data && Array.isArray(response.data.data)) {
+      // Laravel pagination structure (alternative)
       businesses.value = response.data.data
       pagination.value = response.data.meta
       totalBusinesses.value = response.data.meta?.total || response.data.data.length
-    } else if (response.data.businesses) {
-      // Check if businesses is a pagination object
-      if (response.data.businesses.data && Array.isArray(response.data.businesses.data)) {
-        // businesses is a pagination object
-        businesses.value = response.data.businesses.data
-        pagination.value = response.data.businesses
-        totalBusinesses.value = response.data.businesses.total || response.data.businesses.data.length
-      } else if (Array.isArray(response.data.businesses)) {
-        // Direct businesses array
-        businesses.value = response.data.businesses
-        pagination.value = response.data.pagination || null
-        totalBusinesses.value = response.data.businesses.length
-      } else {
-        // Fallback
-        businesses.value = []
-        pagination.value = null
-        totalBusinesses.value = 0
-      }
     } else if (Array.isArray(response.data)) {
       // Direct array response
       businesses.value = response.data

@@ -307,7 +307,15 @@ const fetchFeaturedBusinesses = async () => {
         per_page: 6
       }
     })
-    featuredBusinesses.value = response.data.businesses.data
+    
+    // Handle different response structures safely
+    if (response.data.businesses && response.data.businesses.data) {
+      featuredBusinesses.value = response.data.businesses.data
+    } else if (Array.isArray(response.data.businesses)) {
+      featuredBusinesses.value = response.data.businesses
+    } else {
+      featuredBusinesses.value = []
+    }
   } catch (error) {
     console.error('Error fetching businesses:', error)
   } finally {

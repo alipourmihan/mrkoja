@@ -71,7 +71,14 @@ export const useSeoStore = defineStore('seo', {
         const response = await axios.get(`${API_BASE_URL}/b/${categorySlug}`)
         const data = response.data
         
-        this.businesses = data.businesses.data || data.businesses
+        // Handle different response structures safely
+        if (data.businesses && data.businesses.data) {
+          this.businesses = data.businesses.data
+        } else if (Array.isArray(data.businesses)) {
+          this.businesses = data.businesses
+        } else {
+          this.businesses = []
+        }
         this.currentCategory = data.category
         this.currentCity = null
         this.currentProvince = null
@@ -100,7 +107,14 @@ export const useSeoStore = defineStore('seo', {
         const response = await axios.get(`${API_BASE_URL}/b/${categorySlug}/${citySlug}`)
         const data = response.data
         
-        this.businesses = data.businesses.data || data.businesses
+        // Handle different response structures safely
+        if (data.businesses && data.businesses.data) {
+          this.businesses = data.businesses.data
+        } else if (Array.isArray(data.businesses)) {
+          this.businesses = data.businesses
+        } else {
+          this.businesses = []
+        }
         this.currentCategory = data.category
         this.currentCity = data.city
         this.currentProvince = data.province
@@ -129,7 +143,14 @@ export const useSeoStore = defineStore('seo', {
         const response = await axios.get(`${API_BASE_URL}/b/${categorySlug}/${citySlug}/${neighborhoodSlug}`)
         const data = response.data
         
-        this.businesses = data.businesses.data || data.businesses
+        // Handle different response structures safely
+        if (data.businesses && data.businesses.data) {
+          this.businesses = data.businesses.data
+        } else if (Array.isArray(data.businesses)) {
+          this.businesses = data.businesses
+        } else {
+          this.businesses = []
+        }
         this.currentCategory = data.category
         this.currentCity = data.city
         this.currentProvince = data.province

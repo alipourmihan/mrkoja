@@ -617,7 +617,15 @@ const fetchBusiness = async () => {
     
     const response = await axios.get(`${API_BASE_URL}/businesses/${businessParam}`)
     console.log('Business response:', response.data)
-    business.value = response.data.business
+    
+    // Handle different response structures safely
+    if (response.data.business) {
+      business.value = response.data.business
+    } else if (response.data.data) {
+      business.value = response.data.data
+    } else {
+      business.value = null
+    }
   } catch (error) {
     console.error('Error fetching business:', error)
     console.error('Error response:', error.response?.data)

@@ -13,6 +13,7 @@ class Business extends Model
         'name',
         'slug',
         'description',
+        'full_description',
         'address',
         'phone',
         'landline',
@@ -20,7 +21,7 @@ class Business extends Model
         'website',
         'instagram',
         'whatsapp',
-        'telegram', // Added
+        'telegram',
         'category_id',
         'user_id',
         'province_id',
@@ -46,6 +47,7 @@ class Business extends Model
         'social_media',
         'is_indexed',
         'is_followed',
+        'features',
     ];
     
     protected $casts = [
@@ -60,6 +62,7 @@ class Business extends Model
         'social_media' => 'array',
         'is_indexed' => 'boolean',
         'is_followed' => 'boolean',
+        'features' => 'array',
     ];
 
     /**

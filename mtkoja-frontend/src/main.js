@@ -65,7 +65,9 @@ router.beforeEach(async (to, from, next) => {
 
   // If token exists but user not loaded yet, try to load it before deciding
   if (authStore.token && !authStore.user) {
-    await authStore.ensureUserLoaded?.()
+    if (authStore.ensureUserLoaded) {
+      await authStore.ensureUserLoaded()
+    }
   }
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {

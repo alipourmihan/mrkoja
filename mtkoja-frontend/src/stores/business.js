@@ -34,12 +34,34 @@ export const useBusinessStore = defineStore('business', {
         const queryParams = { ...this.filters, ...params }
         const response = await axios.get(`${API_BASE_URL}/businesses`, { params: queryParams })
         
-        this.businesses = response.data.businesses.data
-        this.pagination = {
-          current_page: response.data.businesses.current_page,
-          last_page: response.data.businesses.last_page,
-          per_page: response.data.businesses.per_page,
-          total: response.data.businesses.total
+        // Handle different response structures safely
+        if (response.data.businesses && response.data.businesses.data) {
+          // Laravel pagination structure
+          this.businesses = response.data.businesses.data
+          this.pagination = {
+            current_page: response.data.businesses.current_page,
+            last_page: response.data.businesses.last_page,
+            per_page: response.data.businesses.per_page,
+            total: response.data.businesses.total
+          }
+        } else if (Array.isArray(response.data.businesses)) {
+          // Direct array structure
+          this.businesses = response.data.businesses
+          this.pagination = {
+            current_page: 1,
+            last_page: 1,
+            per_page: response.data.businesses.length,
+            total: response.data.businesses.length
+          }
+        } else {
+          // Fallback
+          this.businesses = []
+          this.pagination = {
+            current_page: 1,
+            last_page: 1,
+            per_page: 12,
+            total: 0
+          }
         }
         
         return { success: true }
