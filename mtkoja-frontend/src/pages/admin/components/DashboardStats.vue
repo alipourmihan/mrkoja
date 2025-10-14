@@ -2,12 +2,15 @@
   <div>
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- کل کسب‌وکارها -->
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
           <div class="flex-shrink-0">
             <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
               <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                </path>
               </svg>
             </div>
           </div>
@@ -18,12 +21,14 @@
         </div>
       </div>
 
+      <!-- تایید شده -->
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
           <div class="flex-shrink-0">
             <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
               <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
           </div>
@@ -34,12 +39,14 @@
         </div>
       </div>
 
+      <!-- در انتظار تایید -->
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
           <div class="flex-shrink-0">
             <div class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
               <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
           </div>
@@ -50,12 +57,14 @@
         </div>
       </div>
 
+      <!-- دسته‌بندی‌ها -->
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
           <div class="flex-shrink-0">
             <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
               <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
               </svg>
             </div>
           </div>
@@ -139,34 +148,32 @@ const fetchStats = async () => {
   }
 }
 
-    const fetchPendingBusinesses = async () => {
-      loading.value = true
-      const token = localStorage.getItem('token')
-      try {
-        const response = await axios.get(`${API_BASE_URL}/admin/businesses?status=pending`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        pendingBusinesses.value = response.data.businesses.data || response.data.businesses
-      } catch (error) {
-        console.error('Error fetching pending businesses:', error)
-        // Fallback: try to get all businesses and filter pending ones
-        try {
-          const response = await axios.get(`${API_BASE_URL}/admin/businesses`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          })
-          const allBusinesses = response.data.businesses.data || response.data.businesses
-          pendingBusinesses.value = allBusinesses.filter(b => b.status === 'pending')
-        } catch (fallbackError) {
-          console.error('Fallback error:', fallbackError)
-        }
-      } finally {
-        loading.value = false
-      }
+const fetchPendingBusinesses = async () => {
+  loading.value = true
+  const token = localStorage.getItem('token')
+  try {
+    const response = await axios.get(`${API_BASE_URL}/admin/businesses?status=pending`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    // ✅ اصلاح امن
+    pendingBusinesses.value = (response.data?.businesses?.data) || (response.data?.businesses) || []
+  } catch (error) {
+    console.error('Error fetching pending businesses:', error)
+    // Fallback
+    try {
+      const response = await axios.get(`${API_BASE_URL}/admin/businesses`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      const allBusinesses = (response.data?.businesses?.data) || (response.data?.businesses) || []
+      pendingBusinesses.value = allBusinesses.filter(b => b.status === 'pending')
+    } catch (fallbackError) {
+      console.error('Fallback error:', fallbackError)
+      pendingBusinesses.value = []
     }
+  } finally {
+    loading.value = false
+  }
+}
 
 const approveBusiness = async (id) => {
   if (!confirm('آیا از تایید این کسب‌وکار اطمینان دارید؟')) return
@@ -174,15 +181,9 @@ const approveBusiness = async (id) => {
   try {
     const token = localStorage.getItem('token')
     await axios.put(`${API_BASE_URL}/admin/businesses/${id}/approve`, {}, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
+      headers: { 'Authorization': `Bearer ${token}` }
     })
-    
-    // Remove from pending list
     pendingBusinesses.value = pendingBusinesses.value.filter(b => b.id !== id)
-    
-    // Refresh stats
     fetchStats()
     alert('کسب‌وکار با موفقیت تایید شد')
   } catch (error) {
@@ -197,15 +198,9 @@ const rejectBusiness = async (id) => {
   try {
     const token = localStorage.getItem('token')
     await axios.put(`${API_BASE_URL}/admin/businesses/${id}/reject`, {}, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
+      headers: { 'Authorization': `Bearer ${token}` }
     })
-    
-    // Remove from pending list
     pendingBusinesses.value = pendingBusinesses.value.filter(b => b.id !== id)
-    
-    // Refresh stats
     fetchStats()
     alert('کسب‌وکار رد شد')
   } catch (error) {
@@ -219,3 +214,4 @@ onMounted(() => {
   fetchPendingBusinesses()
 })
 </script>
+
