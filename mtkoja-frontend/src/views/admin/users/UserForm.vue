@@ -194,6 +194,38 @@
                 {{ showPasswordField ? 'لغو تغییر رمز عبور' : 'تغییر رمز عبور' }}
               </button>
             </div>
+            
+            <!-- Password Confirmation (only for new users) -->
+            <div v-if="!isEdit">
+              <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
+                تکرار رمز عبور <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <input
+                  id="password_confirmation"
+                  v-model="form.password_confirmation"
+                  :type="showPassword ? 'text' : 'password'"
+                  required
+                  class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                  :class="{ 'border-red-500': errors.password_confirmation }"
+                  placeholder="رمز عبور را مجدداً وارد کنید"
+                >
+                <button
+                  type="button"
+                  @click="showPassword = !showPassword"
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  <svg v-if="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+                  </svg>
+                  <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                </button>
+              </div>
+              <p v-if="errors.password_confirmation" class="mt-1 text-sm text-red-600">{{ errors.password_confirmation }}</p>
+            </div>
           </div>
         </div>
 
@@ -336,6 +368,7 @@ const form = reactive({
   status: 'active',
   department: '',
   password: '',
+  password_confirmation: '',
   address: '',
   notes: '',
   avatar: null,
@@ -383,14 +416,14 @@ const validateForm = () => {
   const newErrors = {}
   
   // Name validation
-  if (!form.name.trim()) {
+  if (!form.name || !form.name.trim()) {
     newErrors.name = 'نام و نام خانوادگی الزامی است'
   } else if (form.name.trim().length < 2) {
     newErrors.name = 'نام باید حداقل 2 کاراکتر باشد'
   }
   
   // Email validation
-  if (!form.email.trim()) {
+  if (!form.email || !form.email.trim()) {
     newErrors.email = 'ایمیل الزامی است'
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
     newErrors.email = 'فرمت ایمیل صحیح نیست'
@@ -411,6 +444,11 @@ const validateForm = () => {
     newErrors.password = 'رمز عبور الزامی است'
   } else if (form.password && form.password.length < 6) {
     newErrors.password = 'رمز عبور باید حداقل 6 کاراکتر باشد'
+  }
+  
+  // Password confirmation validation (for new users)
+  if (!isEdit.value && form.password && form.password !== form.password_confirmation) {
+    newErrors.password_confirmation = 'رمز عبور و تکرار آن مطابقت ندارند'
   }
   
   // Phone validation (if provided)
@@ -457,8 +495,15 @@ const handleSubmit = async () => {
     })
     
     if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(errorData.message || 'خطا در ذخیره اطلاعات')
+      let errorMessage = 'خطا در ذخیره اطلاعات'
+      try {
+        const errorData = await response.json()
+        errorMessage = errorData.message || errorData.error || errorMessage
+      } catch (parseError) {
+        console.error('Error parsing error response:', parseError)
+        errorMessage = `خطا در سرور (کد: ${response.status})`
+      }
+      throw new Error(errorMessage)
     }
     
     const result = await response.json()
@@ -471,14 +516,14 @@ const handleSubmit = async () => {
     
   } catch (error) {
     console.error('Error saving user:', error)
-    console.error('Error response:', error.response?.data)
-    console.error('Error status:', error.response?.status)
+    console.error('Error message:', error.message)
+    console.error('Error stack:', error.stack)
     
-    // Check if response is HTML (offline page)
-    if (error.response?.data && typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE html>')) {
+    // Check if it's a network error
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
       alert('خطا: سرور در دسترس نیست. لطفاً اطمینان حاصل کنید که سرور Laravel راه‌اندازی شده است.')
     } else {
-      alert('خطا در ذخیره اطلاعات: ' + (error.response?.data?.message || error.message))
+      alert('خطا در ذخیره اطلاعات: ' + error.message)
     }
   } finally {
     loading.value = false
@@ -530,7 +575,15 @@ const loadUserData = async () => {
     
   } catch (error) {
     console.error('Error loading user:', error)
-    alert('خطا در بارگذاری اطلاعات کاربر: ' + error.message)
+    console.error('Error message:', error.message)
+    console.error('Error stack:', error.stack)
+    
+    // Check if it's a network error
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      alert('خطا: سرور در دسترس نیست. لطفاً اطمینان حاصل کنید که سرور Laravel راه‌اندازی شده است.')
+    } else {
+      alert('خطا در بارگذاری اطلاعات کاربر: ' + error.message)
+    }
     router.push('/admin/users')
   } finally {
     loading.value = false

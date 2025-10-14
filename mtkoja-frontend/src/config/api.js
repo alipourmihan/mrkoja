@@ -39,7 +39,7 @@ export const API_ENDPOINTS = {
 
 // Helper function to get auth headers
 export const getAuthHeaders = () => {
-  const token = localStorage.getItem('auth_token')
+  const token = localStorage.getItem('token')
   return {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -50,7 +50,7 @@ export const getAuthHeaders = () => {
 
 // Helper function to get auth headers for file uploads
 export const getAuthHeadersForUpload = () => {
-  const token = localStorage.getItem('auth_token')
+  const token = localStorage.getItem('token')
   return {
     'Accept': 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
