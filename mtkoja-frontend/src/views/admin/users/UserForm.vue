@@ -353,10 +353,12 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '../../../stores/auth'
 import { API_ENDPOINTS, getAuthHeadersForUpload } from '../../../config/api'
 
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
 
 // Form data
 const form = reactive({
@@ -468,55 +470,62 @@ const handleSubmit = async () => {
   loading.value = true
   
   try {
-    const formData = new FormData()
-    
-    // Add form fields
-    Object.keys(form).forEach(key => {
-      if (form[key] !== null && form[key] !== '') {
-        formData.append(key, form[key])
+    if (isEdit.value) {
+      // Edit existing user
+      const formData = new FormData()
+      
+      // Add form fields
+      Object.keys(form).forEach(key => {
+        if (form[key] !== null && form[key] !== '') {
+          formData.append(key, form[key])
+        }
+      })
+      
+      // Add avatar if selected
+      if (form.avatar) {
+        formData.append('avatar', form.avatar)
       }
-    })
+      
+      const url = API_ENDPOINTS.USERS.UPDATE(route.params.id)
+      
+      const response = await fetch(url, {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          ...(localStorage.getItem('token') && { 'Authorization': `Bearer ${localStorage.getItem('token')}` })
+        }
+      })
     
-    // Add avatar if selected
-    if (form.avatar) {
-      formData.append('avatar', form.avatar)
+      if (!response.ok) {
+        let errorMessage = 'خطا در ذخیره اطلاعات'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.message || errorData.error || errorMessage
+        } catch (parseError) {
+          console.error('Error parsing error response:', parseError)
+          errorMessage = `خطا در سرور (کد: ${response.status})`
+        }
+        throw new Error(errorMessage)
+      }
+      
+      const result = await response.json()
+      
+      // Success message
+      alert('کاربر با موفقیت ویرایش شد')
+      
+      // Redirect to users list
+      router.push('/admin/users')
+    } else {
+      // Create new user using auth store
+      const result = await authStore.createUser(form)
+      
+      if (result.success) {
+        alert('کاربر با موفقیت ایجاد شد!')
+        router.push('/admin/users')
+      }
     }
-    
-    const url = isEdit.value 
-      ? API_ENDPOINTS.USERS.UPDATE(route.params.id)
-      : API_ENDPOINTS.USERS.CREATE
-    
-    const method = isEdit.value ? 'PUT' : 'POST'
-    
-    const response = await fetch(url, {
-      method,
-      body: formData,
-      headers: {
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        ...(localStorage.getItem('token') && { 'Authorization': `Bearer ${localStorage.getItem('token')}` })
-      }
-    })
-    
-    if (!response.ok) {
-      let errorMessage = 'خطا در ذخیره اطلاعات'
-      try {
-        const errorData = await response.json()
-        errorMessage = errorData.message || errorData.error || errorMessage
-      } catch (parseError) {
-        console.error('Error parsing error response:', parseError)
-        errorMessage = `خطا در سرور (کد: ${response.status})`
-      }
-      throw new Error(errorMessage)
-    }
-    
-    const result = await response.json()
-    
-    // Success message
-    alert(isEdit.value ? 'کاربر با موفقیت ویرایش شد' : 'کاربر با موفقیت افزوده شد')
-    
-    // Redirect to users list
-    router.push('/admin/users')
     
   } catch (error) {
     console.error('Error saving user:', error)

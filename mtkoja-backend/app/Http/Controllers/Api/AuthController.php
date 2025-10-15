@@ -68,6 +68,11 @@ class AuthController extends Controller
         }
 
         $user = User::where('email', $request->email)->firstOrFail();
+        
+        // Revoke all existing tokens
+        $user->tokens()->delete();
+        
+        // Create new token
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([
@@ -209,9 +214,13 @@ class AuthController extends Controller
                 $user->save();
             }
 
+            // Create personal access token for the user
+            $token = $user->createToken('auth-token')->plainTextToken;
+
             return response()->json([
                 'message' => 'User created successfully',
-                'user' => $user
+                'user' => $user,
+                'token' => $token
             ], 201);
         } catch (\Exception $e) {
             return response()->json([

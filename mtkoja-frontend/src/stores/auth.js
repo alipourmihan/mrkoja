@@ -159,6 +159,35 @@ export const useAuthStore = defineStore('auth', {
         }
       }
       return true
+    },
+
+    // Admin user creation
+    async createUser(userData) {
+      if (!this.isAdmin) {
+        throw new Error('Access denied. Admin role required.')
+      }
+
+      try {
+        const formData = new FormData()
+        
+        // Add all user data to FormData
+        Object.keys(userData).forEach(key => {
+          if (userData[key] !== null && userData[key] !== undefined) {
+            formData.append(key, userData[key])
+          }
+        })
+
+        const response = await axios.post(`${API_BASE_URL}/admin/users`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Accept': 'application/json'
+          }
+        })
+
+        return { success: true, user: response.data.user, token: response.data.token }
+      } catch (error) {
+        throw new Error(error.response?.data?.message || 'Failed to create user')
+      }
     }
   }
 })
