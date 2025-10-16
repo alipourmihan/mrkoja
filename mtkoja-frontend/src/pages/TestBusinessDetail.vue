@@ -78,7 +78,7 @@ const testId = ref('1')
 const loading = ref(false)
 const testResult = ref(null)
 
-const API_BASE_URL = 'https://mrkoja.com/api'
+const API_BASE_URL = 'https://api.mrkoja.com/api'
 
 const testFetchBusiness = async () => {
   loading.value = true

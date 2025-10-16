@@ -343,7 +343,7 @@ import { ref, onMounted, nextTick } from 'vue'
 import axios from 'axios'
 import Chart from 'chart.js/auto'
 
-const API_BASE_URL = 'https://mrkoja.com/api'
+const API_BASE_URL = 'https://api.mrkoja.com/api'
 
 // State
 const activeTab = ref('dashboard')

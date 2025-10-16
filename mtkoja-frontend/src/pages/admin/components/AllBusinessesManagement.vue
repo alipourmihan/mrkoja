@@ -388,7 +388,7 @@ import BusinessActions from '@/components/BusinessActions.vue'
 
 const router = useRouter()
 
-const API_BASE_URL = 'https://mrkoja.com/api'
+const API_BASE_URL = 'https://api.mrkoja.com/api'
 
 // State
 const businesses = ref([])
@@ -542,7 +542,7 @@ const getBusinessImageUrl = (imagePath) => {
     return imagePath
   }
   // اگر imagePath فقط نام فایل است
-  return `https://mrkoja.com/storage/businesses/${imagePath}`
+  return `https://api.mrkoja.com/storage/businesses/${imagePath}`
 }
 
 const handleBusinessImageError = (event) => {

@@ -572,7 +572,7 @@ const showImageModal = ref(false)
 const selectedImage = ref('')
 const selectedImageIndex = ref(0)
 
-const API_BASE_URL = 'https://mrkoja.com/api'
+const API_BASE_URL = 'https://api.mrkoja.com/api'
 
 // Working hours data
 const workingHours = ref({

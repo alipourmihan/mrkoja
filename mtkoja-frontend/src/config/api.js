@@ -1,5 +1,5 @@
 // API Configuration
-export const API_BASE_URL = 'https://mrkoja.com/api'
+export const API_BASE_URL = 'https://api.mrkoja.com/api'
 
 export const API_ENDPOINTS = {
   // Users

@@ -501,7 +501,7 @@ import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import NeshanMapSearch from '@/components/NeshanMapSearch.vue'
 
-const API_BASE_URL = 'https://mrkoja.com/api'
+const API_BASE_URL = 'https://api.mrkoja.com/api'
 
 // Form data
 const formData = ref({

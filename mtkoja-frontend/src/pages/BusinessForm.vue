@@ -1009,7 +1009,7 @@ const submitForm = async () => {
         let response
         if (isEditMode.value) {
           // Update existing business
-          response = await axios.put(`https://mrkoja.com/api/businesses/${businessId.value}`, formDataToSubmit, {
+          response = await axios.put(`https://api.mrkoja.com/api/businesses/${businessId.value}`, formDataToSubmit, {
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
@@ -1017,7 +1017,7 @@ const submitForm = async () => {
           })
         } else {
           // Create new business
-          response = await axios.post('https://mrkoja.com/api/businesses', formDataToSubmit, {
+          response = await axios.post('https://api.mrkoja.com/api/businesses', formDataToSubmit, {
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
@@ -1038,7 +1038,7 @@ const submitForm = async () => {
           })
           
           try {
-            const imageResponse = await axios.post(`https://mrkoja.com/api/businesses/${businessId}/images`, formData, {
+            const imageResponse = await axios.post(`https://api.mrkoja.com/api/businesses/${businessId}/images`, formData, {
               headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data'

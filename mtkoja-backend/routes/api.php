@@ -80,61 +80,9 @@ Route::get('/cities', [LocationController::class, 'getCities']);
 Route::get('/cities/{city}/neighborhoods', [LocationController::class, 'getNeighborhoodsByCity']);
 Route::get('/neighborhoods', [LocationController::class, 'getNeighborhoods']);
 
-// Auth routes
+// Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
-// User management routes (with admin middleware)
-Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-    Route::get('/admin/users', [AuthController::class, 'getAllUsers']);
-    Route::post('/admin/users', [AuthController::class, 'createUser']);
-    Route::get('/admin/users/{user}', [AuthController::class, 'getUser']);
-    Route::put('/admin/users/{user}', [AuthController::class, 'updateUser']);
-    Route::delete('/admin/users/{user}', [AuthController::class, 'deleteUser']);
-    Route::get('/admin/users/{user}/businesses', [AuthController::class, 'getUserBusinesses']);
-});
-
-// Location management routes (with admin middleware)
-Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-    Route::post('/provinces', [LocationController::class, 'createProvince']);
-    Route::put('/provinces/{province}', [LocationController::class, 'updateProvince']);
-    Route::delete('/provinces/{id}', [LocationController::class, 'deleteProvince']);
-    Route::post('/cities', [LocationController::class, 'createCity']);
-    Route::put('/cities/{city}', [LocationController::class, 'updateCity']);
-    Route::delete('/cities/{id}', [LocationController::class, 'deleteCity']);
-    Route::post('/neighborhoods', [LocationController::class, 'createNeighborhood']);
-    Route::put('/neighborhoods/{neighborhood}', [LocationController::class, 'updateNeighborhood']);
-    Route::delete('/neighborhoods/{id}', [LocationController::class, 'deleteNeighborhood']);
-});
-
-// Category management routes (with admin middleware)
-Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-    Route::post('/categories', [LocationController::class, 'createCategory']);
-    Route::put('/categories/{category}', [LocationController::class, 'updateCategory']);
-    Route::delete('/categories/{category}', [LocationController::class, 'deleteCategory']);
-});
-
-// Business management routes (with admin middleware)
-Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-    Route::post('/admin/businesses', [BusinessController::class, 'adminStore']);
-    Route::put('/admin/businesses/{id}', [BusinessController::class, 'adminUpdate']);
-    Route::delete('/admin/businesses/{id}', [BusinessController::class, 'destroy']);
-    Route::put('/admin/businesses/{id}/approve', [BusinessController::class, 'approve']);
-    Route::put('/admin/businesses/{id}/reject', [BusinessController::class, 'reject']);
-});
-
-// SEO management routes (with admin middleware)
-Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-    Route::post('/admin/seo-pages', [SeoPageController::class, 'store']);
-    Route::put('/admin/seo-pages/{seoPage}', [SeoPageController::class, 'update']);
-    Route::delete('/admin/seo-pages/{seoPage}', [SeoPageController::class, 'destroy']);
-    Route::post('/admin/seo/generate-business/{business}', [SeoAdminController::class, 'generateBusinessSeo']);
-    Route::post('/admin/seo/generate-category/{category}', [SeoAdminController::class, 'generateCategorySeo']);
-    Route::post('/admin/seo/generate-bulk', [SeoAdminController::class, 'generateBulkSeo']);
-    Route::post('/admin/seo/validate', [SeoAdminController::class, 'validateSeo']);
-    Route::post('/admin/seo/generate-sitemap', [SeoAdminController::class, 'generateSitemap']);
-    Route::post('/admin/seo/generate-robots', [SeoAdminController::class, 'generateRobotsTxt']);
-});
 
 // Protected routes - with authentication
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -156,6 +104,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     
     // Admin routes - with admin middleware
     Route::middleware(['admin'])->group(function () {
+        // User management routes
+        Route::get('/admin/users', [AuthController::class, 'getAllUsers']);
+        Route::post('/admin/users', [AuthController::class, 'createUser']);
+        Route::get('/admin/users/{user}', [AuthController::class, 'getUser']);
+        Route::put('/admin/users/{user}', [AuthController::class, 'updateUser']);
+        Route::delete('/admin/users/{user}', [AuthController::class, 'deleteUser']);
+        Route::get('/admin/users/{user}/businesses', [AuthController::class, 'getUserBusinesses']);
+        
         // Categories management
         Route::get('/admin/categories', [LocationController::class, 'getCategories']);
         
@@ -185,6 +141,40 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/admin/seo/reports', [SeoAdminController::class, 'getSeoReports']);
         Route::get('/admin/seo/businesses-without-seo', [SeoAdminController::class, 'businessesWithoutSeo']);
         Route::get('/admin/seo/categories-without-seo', [SeoAdminController::class, 'categoriesWithoutSeo']);
+        
+        // Location management routes (admin only)
+        Route::post('/provinces', [LocationController::class, 'createProvince']);
+        Route::put('/provinces/{province}', [LocationController::class, 'updateProvince']);
+        Route::delete('/provinces/{id}', [LocationController::class, 'deleteProvince']);
+        Route::post('/cities', [LocationController::class, 'createCity']);
+        Route::put('/cities/{city}', [LocationController::class, 'updateCity']);
+        Route::delete('/cities/{id}', [LocationController::class, 'deleteCity']);
+        Route::post('/neighborhoods', [LocationController::class, 'createNeighborhood']);
+        Route::put('/neighborhoods/{neighborhood}', [LocationController::class, 'updateNeighborhood']);
+        Route::delete('/neighborhoods/{id}', [LocationController::class, 'deleteNeighborhood']);
+        
+        // Category management routes (admin only)
+        Route::post('/categories', [LocationController::class, 'createCategory']);
+        Route::put('/categories/{category}', [LocationController::class, 'updateCategory']);
+        Route::delete('/categories/{category}', [LocationController::class, 'deleteCategory']);
+        
+        // Business management routes (admin only)
+        Route::post('/admin/businesses', [BusinessController::class, 'adminStore']);
+        Route::put('/admin/businesses/{id}', [BusinessController::class, 'adminUpdate']);
+        Route::delete('/admin/businesses/{id}', [BusinessController::class, 'destroy']);
+        Route::put('/admin/businesses/{id}/approve', [BusinessController::class, 'approve']);
+        Route::put('/admin/businesses/{id}/reject', [BusinessController::class, 'reject']);
+        
+        // SEO management routes (admin only)
+        Route::post('/admin/seo-pages', [SeoPageController::class, 'store']);
+        Route::put('/admin/seo-pages/{seoPage}', [SeoPageController::class, 'update']);
+        Route::delete('/admin/seo-pages/{seoPage}', [SeoPageController::class, 'destroy']);
+        Route::post('/admin/seo/generate-business/{business}', [SeoAdminController::class, 'generateBusinessSeo']);
+        Route::post('/admin/seo/generate-category/{category}', [SeoAdminController::class, 'generateCategorySeo']);
+        Route::post('/admin/seo/generate-bulk', [SeoAdminController::class, 'generateBulkSeo']);
+        Route::post('/admin/seo/validate', [SeoAdminController::class, 'validateSeo']);
+        Route::post('/admin/seo/generate-sitemap', [SeoAdminController::class, 'generateSitemap']);
+        Route::post('/admin/seo/generate-robots', [SeoAdminController::class, 'generateRobotsTxt']);
     });
 });
 
