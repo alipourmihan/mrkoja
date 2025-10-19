@@ -215,7 +215,7 @@ http://your-domain.com/admin/seo
 
 ### ✅ پیش‌نیازها
 - [ ] Laravel 9+
-- [ ] PHP 8.0+
+- [ ] PHP 8.4+
 - [ ] MySQL/SQLite
 - [ ] Node.js (برای کامپایل assets)
 

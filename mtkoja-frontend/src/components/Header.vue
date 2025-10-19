@@ -36,6 +36,25 @@
           </router-link>
         </nav>
 
+        <!-- Home-only extras: Location & Notifications (desktop) -->
+        <div v-if="isHome" class="hidden md:flex items-center space-x-4 space-x-reverse">
+          <!-- Location -->
+          <div class="flex items-center text-gray-700">
+            <span class="text-sm font-medium">تهران</span>
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+
+          <!-- Notifications -->
+          <div class="relative">
+            <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+            </svg>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">1</span>
+          </div>
+        </div>
+
         <!-- User Menu -->
         <div class="flex items-center space-x-4">
           <template v-if="authStore.isAuthenticated">
@@ -181,15 +200,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
 const showUserMenu = ref(false)
 const showMobileMenu = ref(false)
+
+const isHome = computed(() => route.name === 'Home')
 
 const logout = async () => {
   await authStore.logout()

@@ -8,38 +8,7 @@
     
     <!-- Regular Home Page -->
     <div v-else class="pb-20 md:pb-0">
-      <!-- Header Section -->
-      <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex items-center justify-between py-4">
-            <!-- Logo -->
-            <div class="flex items-center">
-              <h1 class="text-2xl font-bold">
-                <span class="text-red-500">مت</span><span class="text-gray-900">کجا</span>
-              </h1>
-            </div>
-            
-            <!-- Location & Notifications -->
-            <div class="flex items-center space-x-4 space-x-reverse">
-              <!-- Location -->
-              <div class="flex items-center text-gray-700">
-                <span class="text-sm font-medium">تهران</span>
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-              </div>
-              
-              <!-- Notifications -->
-              <div class="relative">
-                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                </svg>
-                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">1</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <!-- Header Section removed: now provided by global Header.vue -->
 
       <!-- Hero Section -->
       <section class="bg-white py-8">
@@ -144,7 +113,7 @@
       <!-- What's New Section -->
       <section class="py-8 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">چه چیز جدیدی در متکجا</h2>
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">چه چیز جدیدی در مسترکجا</h2>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Featured Card 1 -->

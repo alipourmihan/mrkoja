@@ -22,20 +22,6 @@ class DatabaseSeeder extends Seeder
             ImageSeeder::class,
         ]);
 
-        // Create admin user
-        User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@mtkoja.com',
-            'password' => \Hash::make('password'),
-            'role' => 'admin',
-        ]);
-
-        // Create business owner user
-        User::create([
-            'name' => 'Business Owner',
-            'email' => 'owner@mtkoja.com',
-            'password' => \Hash::make('password'),
-            'role' => 'business_owner',
-        ]);
+        // حذف ساخت هرگونه کاربر پیش‌فرض طبق درخواست پروژه
     }
 }

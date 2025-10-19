@@ -11,14 +11,9 @@ if (persistedToken) {
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: {
-      id: 1,
-      name: 'Test User',
-      email: 'test@example.com',
-      role: 'admin'
-    },
+    user: null,
     token: null,
-    isAuthenticated: true,
+    isAuthenticated: false,
     lastActivity: localStorage.getItem('lastActivity') ? new Date(localStorage.getItem('lastActivity')) : null,
     timeoutId: null,
   }),

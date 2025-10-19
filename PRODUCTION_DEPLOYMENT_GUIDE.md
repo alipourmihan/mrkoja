@@ -15,7 +15,7 @@
 ## 🚀 آماده‌سازی اولیه
 
 ### پیش‌نیازها
-- سرور با PHP 8.1+ 
+- سرور با PHP 8.4+ 
 - MySQL 8.0+ یا MariaDB 10.3+
 - Composer
 - Git (اختیاری)
@@ -102,7 +102,7 @@ rsync -avz --exclude 'node_modules' --exclude '.git' \
 #### Ubuntu/Debian:
 ```bash
 sudo apt update
-sudo apt install php8.1 php8.1-cli php8.1-fpm php8.1-mysql php8.1-xml php8.1-mbstring php8.1-curl php8.1-zip php8.1-gd
+sudo apt install php8.4 php8.4-cli php8.4-fpm php8.4-mysql php8.4-xml php8.4-mbstring php8.4-curl php8.4-zip php8.4-gd
 sudo apt install mysql-server nginx composer
 ```
 
@@ -115,7 +115,7 @@ sudo yum install mysql-server nginx composer
 ### تنظیم PHP
 ```bash
 # ویرایش فایل php.ini
-sudo nano /etc/php/8.1/fpm/php.ini
+sudo nano /etc/php/8.4/fpm/php.ini
 
 # تنظیمات مهم:
 upload_max_filesize = 50M
@@ -243,7 +243,7 @@ server {
     error_page 404 /index.php;
 
     location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         include fastcgi_params;
     }

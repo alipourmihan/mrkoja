@@ -3,7 +3,7 @@
     <div class="max-w-md w-full space-y-8">
       <div>
         <div class="mx-auto h-12 w-12 flex items-center justify-center">
-          <h1 class="text-3xl font-bold text-primary-600">mtkoja</h1>
+          <h1 class="text-3xl font-bold text-primary-600">مسترکجا</h1>
         </div>
         <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
           ورود به حساب کاربری

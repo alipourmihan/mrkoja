@@ -4,7 +4,7 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <!-- Logo and Description -->
         <div class="col-span-1 md:col-span-2">
-          <h3 class="text-2xl font-bold text-white mb-4 font-iran">متکجا</h3>
+          <h3 class="text-2xl font-bold text-white mb-4 font-iran">مسترکجا</h3>
           <p class="text-gray-300 mb-4 max-w-md">
             پلتفرم معرفی بهترین کسب‌وکارها و حوزه‌های فعالیت. ما به شما کمک می‌کنیم تا بهترین خدمات و محصولات را پیدا کنید.
           </p>
@@ -100,7 +100,7 @@
       <div class="mt-8 pt-8 border-t border-gray-800">
         <div class="flex flex-col md:flex-row justify-between items-center">
           <p class="text-gray-400 text-sm">
-            © 2024 mtkoja. تمامی حقوق محفوظ است.
+            © 2024 مسترکجا. تمامی حقوق محفوظ است.
           </p>
           <div class="flex space-x-6 mt-4 md:mt-0">
             <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">
