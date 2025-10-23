@@ -81,6 +81,7 @@ class ImageController extends Controller
                     'filename' => $image->filename,
                     'original_name' => $image->original_name,
                     'url' => $image->url,
+                    'path' => $image->path,
                     'size' => $image->size,
                     'mime_type' => $image->mime_type,
                 ];

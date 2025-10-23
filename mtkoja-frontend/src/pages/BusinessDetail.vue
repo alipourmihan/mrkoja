@@ -208,10 +208,10 @@
                 v-for="(image, index) in business.image_urls" 
                 :key="index" 
                 class="group aspect-square bg-gray-100 rounded-2xl overflow-hidden cursor-pointer hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                @click="openImageModal(image.url, index)"
+                @click="openImageModal(resolveImageUrl(image), index)"
               >
                 <img 
-                  :src="image.url" 
+                  :src="resolveImageUrl(image)" 
                   :alt="`تصویر ${index + 1} از ${business.name}`"
                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   @error="handleImageError"
@@ -669,6 +669,15 @@ const handleImageError = (event) => {
   console.error('Image failed to load:', event.target.src)
   // You can add a fallback image here if needed
   event.target.style.display = 'none'
+}
+
+const resolveImageUrl = (image) => {
+  if (!image) return ''
+  const url = image.url || image.path || ''
+  if (!url) return ''
+  if (/^https?:\/\//i.test(url)) return url
+  if (url.startsWith('/storage/')) return `https://mrkoja.com${url}`
+  return `https://api.mrkoja.com/storage/${url}`
 }
 
 // Keyboard navigation for image modal

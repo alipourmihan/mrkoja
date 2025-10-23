@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 
 class Image extends Model
 {
@@ -56,6 +57,12 @@ class Image extends Model
      */
     public function getUrlAttribute()
     {
-        return 'http://localhost:8000/storage/' . $this->path;
+        // Build a public URL for the stored file based on configured app URL
+        $relative = Storage::disk('public')->url($this->path); // e.g. /storage/...
+        if (preg_match('/^https?:\/\//i', $relative)) {
+            return $relative;
+        }
+        $base = rtrim(config('app.url'), '/');
+        return $base . $relative;
     }
 }
