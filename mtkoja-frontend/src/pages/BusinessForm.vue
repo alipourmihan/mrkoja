@@ -332,14 +332,13 @@
             >
               <div class="text-4xl text-gray-400 mb-4">📷</div>
               <p class="text-gray-600 mb-2 font-iran">فایل‌های خود را اینجا بکشید یا کلیک کنید</p>
-              <p class="text-sm text-gray-500 font-iran">فرمت‌های مجاز تصویر: jpg, jpeg, png, gif, heic</p>
-              <p class="text-sm text-gray-500 font-iran">فرمت‌های مجاز ویدئو: mp4, mov</p>
+              <p class="text-sm text-gray-500 font-iran">فرمت‌های مجاز تصویر: jpg, jpeg, png, webp</p>
             </div>
             <input 
               ref="fileInput"
               type="file" 
               multiple 
-              accept="image/*,video/*" 
+              accept="image/*" 
               class="hidden" 
               @change="handleFileSelect"
             >
@@ -774,20 +773,45 @@ const toggleKeyword = (keyword) => {
   }
 }
 
-const handleFileSelect = (event) => {
+const handleFileSelect = async (event) => {
   const files = Array.from(event.target.files)
-  files.forEach(file => {
-    if (uploadedFiles.value.length < 10) {
-      // Create object URL for preview
-      const fileObj = {
-        file: file,
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        url: URL.createObjectURL(file)
-      }
-      uploadedFiles.value.push(fileObj)
+  for (const file of files) {
+    if (uploadedFiles.value.length >= 10) break
+    if (!file.type.startsWith('image/')) continue
+    const compressed = await compressImage(file, 1600, 0.8)
+    const fileObj = {
+      file: compressed.blob,
+      name: compressed.name,
+      type: compressed.blob.type,
+      size: compressed.blob.size,
+      url: URL.createObjectURL(compressed.blob)
     }
+    uploadedFiles.value.push(fileObj)
+  }
+}
+
+const compressImage = (file, maxSize = 1600, quality = 0.8) => {
+  return new Promise((resolve) => {
+    const img = new Image()
+    const url = URL.createObjectURL(file)
+    img.onload = () => {
+      let { width, height } = img
+      const scale = Math.min(1, maxSize / Math.max(width, height))
+      width = Math.round(width * scale)
+      height = Math.round(height * scale)
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0, width, height)
+      canvas.toBlob((blob) => {
+        URL.revokeObjectURL(url)
+        const name = file.name.replace(/\.(png|jpg|jpeg|webp|gif)$/i, '.jpg')
+        resolve({ blob: blob || file, name })
+      }, 'image/jpeg', quality)
+    }
+    img.onerror = () => resolve({ blob: file, name: file.name })
+    img.src = url
   })
 }
 
@@ -1068,8 +1092,7 @@ const submitForm = async () => {
           try {
             const imageResponse = await axios.post(`https://api.mrkoja.com/api/businesses/${businessId}/images`, formData, {
               headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data'
+                'Authorization': `Bearer ${token}`
               }
             })
             console.log('Images uploaded successfully:', imageResponse.data)
