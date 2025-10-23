@@ -97,10 +97,11 @@ export const useBusinessStore = defineStore('business', {
       this.loading = true
       try {
         const token = localStorage.getItem('token')
+        const isFormData = (typeof FormData !== 'undefined') && (businessData instanceof FormData)
         const response = await axios.post(`${API_BASE_URL}/businesses`, businessData, {
           headers: {
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            ...(isFormData ? {} : { 'Content-Type': 'application/json' })
           }
         })
         this.businesses.unshift(response.data.business)
@@ -120,7 +121,17 @@ export const useBusinessStore = defineStore('business', {
     async updateBusiness(id, businessData) {
       this.loading = true
       try {
-        const response = await axios.put(`${API_BASE_URL}/businesses/${id}`, businessData)
+        const token = localStorage.getItem('token')
+        const isFormData = (typeof FormData !== 'undefined') && (businessData instanceof FormData)
+        const response = await axios({
+          url: `${API_BASE_URL}/businesses/${id}`,
+          method: isFormData ? 'post' : 'put',
+          data: businessData,
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            ...(isFormData ? {} : { 'Content-Type': 'application/json' })
+          }
+        })
         
         // Update in businesses array
         const index = this.businesses.findIndex(b => b.id === id)

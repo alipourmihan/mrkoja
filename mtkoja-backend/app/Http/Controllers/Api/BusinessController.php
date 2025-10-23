@@ -152,23 +152,13 @@ class BusinessController extends Controller
             ], 422);
         }
 
-        // Get user ID safely
-        $userId = 1; // Default user
-        if ($request->user()) {
-            $userId = $request->user()->id;
-        } else {
-            // Create a default user if none exists
-            $defaultUser = \App\Models\User::first();
-            if (!$defaultUser) {
-                $defaultUser = \App\Models\User::create([
-                    'name' => 'Default User',
-                    'email' => 'default@example.com',
-                    'password' => \Illuminate\Support\Facades\Hash::make('password'),
-                    'role' => 'user'
-                ]);
-            }
-            $userId = $defaultUser->id;
+        // Get user ID safely - do NOT create default users
+        if (!$request->user()) {
+            return response()->json([
+                'message' => 'Authentication required'
+            ], 401);
         }
+        $userId = $request->user()->id;
 
         $business = Business::create([
             'user_id' => $userId,
@@ -230,6 +220,9 @@ class BusinessController extends Controller
             'landline' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
             'website' => 'nullable|url|max:255',
+            'instagram' => 'nullable|string|max:255',
+            'whatsapp' => 'nullable|string|max:20',
+            'telegram' => 'nullable|string|max:255',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'images' => 'nullable|array',
@@ -252,8 +245,12 @@ class BusinessController extends Controller
             'description' => $request->description,
             'address' => $request->address,
             'phone' => $request->phone,
+            'landline' => $request->landline,
             'email' => $request->email,
             'website' => $request->website,
+            'instagram' => $request->instagram,
+            'whatsapp' => $request->whatsapp,
+            'telegram' => $request->telegram,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'images' => $request->images,

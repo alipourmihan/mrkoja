@@ -551,6 +551,9 @@ const formData = ref({
   landlinePhone: '',
   email: '',
   website: '',
+  instagram: '',
+  telegram: '',
+  whatsapp: '',
   latitude: '',
   longitude: '',
   images: [],
@@ -884,6 +887,9 @@ const loadBusinessData = async () => {
       landlinePhone: business.landline_phone || '',
       email: business.email || '',
       website: business.website || '',
+      instagram: business.instagram || '',
+      telegram: business.telegram || '',
+      whatsapp: business.whatsapp || '',
       latitude: business.latitude || '',
       longitude: business.longitude || '',
       images: business.images || [],
@@ -984,14 +990,34 @@ const submitForm = async () => {
         return
       }
       
-      // Collect all form data
-      const formDataToSubmit = {
+  // Normalize social inputs
+  const normalizeHandle = (val, providers) => {
+    if (!val) return ''
+    let v = String(val).trim()
+    v = v.replace(/^@+/, '')
+    providers.forEach(p => {
+      v = v.replace(new RegExp(`^https?:\\/\\/(www\\.)?${p}\\.com\\/`, 'i'), '')
+      v = v.replace(new RegExp(`^${p}\\.me\\/`, 'i'), '')
+      v = v.replace(new RegExp(`^${p}\\.me:`, 'i'), '')
+    })
+    return v
+  }
+  const normalizedInstagram = normalizeHandle(formData.value.instagram, ['instagram'])
+  const normalizedTelegram = normalizeHandle(formData.value.telegram, ['t', 'telegram'])
+  const normalizedWhatsapp = (formData.value.whatsapp || '').toString().replace(/[^0-9]/g, '').slice(-10)
+
+  // Collect all form data
+  const formDataToSubmit = {
         name: formData.value.name,
         description: formData.value.fullDescription || formData.value.description,
         address: locationData.value.address || formData.value.address,
         phone: formData.value.phone,
+    landline: formData.value.landlinePhone,
         email: formData.value.email,
         website: formData.value.website,
+    instagram: normalizedInstagram,
+    telegram: normalizedTelegram,
+    whatsapp: normalizedWhatsapp,
         latitude: locationData.value.lat ? parseFloat(locationData.value.lat) : (formData.value.latitude ? parseFloat(formData.value.latitude) : null),
         longitude: locationData.value.lng ? parseFloat(locationData.value.lng) : (formData.value.longitude ? parseFloat(formData.value.longitude) : null),
         category_id: selectedCategoryId.value || selectedParentCategoryId.value,
@@ -1034,7 +1060,9 @@ const submitForm = async () => {
           
           const formData = new FormData()
           uploadedFiles.value.forEach((fileObj, index) => {
-            formData.append(`images[${index}]`, fileObj.file)
+            if (fileObj && fileObj.file) {
+              formData.append(`images[${index}]`, fileObj.file)
+            }
           })
           
           try {
