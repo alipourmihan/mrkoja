@@ -82,8 +82,8 @@
                   <p class="font-medium text-red-700 mb-2">✗ مثال نامناسب:</p>
                   <p class="text-sm">انجام کلیه خدمات ناخن و رنگ مو</p>
                   <p class="text-sm">🍕 بهترین پیتزای منطقه!!</p>
-      </div>
-    </form>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -507,7 +507,7 @@
         </div>
 
       </div>
-    </div>
+    </form>
   </div>
 </template>
 
