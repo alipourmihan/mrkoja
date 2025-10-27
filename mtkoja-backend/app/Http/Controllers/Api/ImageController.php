@@ -56,13 +56,20 @@ class ImageController extends Controller
 
         foreach ($request->file('images') as $index => $file) {
             try {
-                // تولید نام فایل منحصر به فرد
-                $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-                
-                // مسیر ذخیره
-                $path = 'businesses/' . $businessId . '/' . $filename;
-                
-                // آپلود فایل
+                // تعیین پسوند فایل از نام یا MIME
+                $originalExt = strtolower($file->getClientOriginalExtension());
+                if (!$originalExt) {
+                    $mime = $file->getMimeType();
+                    $originalExt = $mime ? strtolower(explode('/', $mime)[1] ?? 'jpg') : 'jpg';
+                }
+                if ($originalExt === 'jpeg') {
+                    $originalExt = 'jpg';
+                }
+
+                // تولید نام فایل منحصر به فرد به همراه پسوند
+                $filename = Str::uuid() . '.' . $originalExt;
+
+                // آپلود فایل روی دیسک public
                 $uploadedPath = $file->storeAs('businesses/' . $businessId, $filename, 'public');
                 
                 // ذخیره اطلاعات در دیتابیس

@@ -676,7 +676,7 @@ const resolveImageUrl = (image) => {
   const url = image.url || image.path || ''
   if (!url) return ''
   if (/^https?:\/\//i.test(url)) return url
-  if (url.startsWith('/storage/')) return `https://mrkoja.com${url}`
+  if (url.startsWith('/storage/')) return `https://api.mrkoja.com${url}`
   return `https://api.mrkoja.com/storage/${url}`
 }
 

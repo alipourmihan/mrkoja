@@ -335,7 +335,7 @@ const getBusinessImage = (business) => {
     if (imageUrl.startsWith('http')) {
       return imageUrl
     } else if (imageUrl.startsWith('/storage/')) {
-      return `https://mrkoja.com${imageUrl}`
+      return `https://api.mrkoja.com${imageUrl}`
     } else {
       return `https://api.mrkoja.com/storage/${imageUrl}`
     }
@@ -348,7 +348,7 @@ const getBusinessImage = (business) => {
     if (imageUrl.startsWith('http')) {
       return imageUrl
     } else if (imageUrl.startsWith('/storage/')) {
-      return `https://mrkoja.com${imageUrl}`
+      return `https://api.mrkoja.com${imageUrl}`
     } else {
       return `https://api.mrkoja.com/storage/${imageUrl}`
     }

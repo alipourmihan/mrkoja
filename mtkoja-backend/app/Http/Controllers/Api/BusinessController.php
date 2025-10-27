@@ -54,7 +54,7 @@ class BusinessController extends Controller
         $businesses->getCollection()->transform(function ($business) {
             // Get images from database using relationship
             $images = $business->images()->ordered()->get();
-            
+
             $business->image_urls = $images->map(function ($image) {
                 return [
                     'id' => $image->id,
@@ -62,26 +62,13 @@ class BusinessController extends Controller
                     'is_primary' => $image->is_primary,
                     'sort_order' => $image->sort_order,
                 ];
-            });
-            
-            // Add sample images if no images exist
-            if (empty($business->image_urls)) {
-                $sampleImages = [
-                    'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop',
-                    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
-                    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop',
-                ];
-                
-                $business->image_urls = [
-                    [
-                        'id' => 0,
-                        'url' => $sampleImages[array_rand($sampleImages)],
-                        'is_primary' => true,
-                        'sort_order' => 0,
-                    ]
-                ];
+            })->values()->all();
+
+            // Ensure empty array if no images
+            if (!$business->image_urls) {
+                $business->image_urls = [];
             }
-            
+
             return $business;
         });
 
@@ -106,7 +93,7 @@ class BusinessController extends Controller
         
         // Add image URLs to business data
         $images = $business->images()->ordered()->get();
-        
+
         $business->image_urls = $images->map(function ($image) {
             return [
                 'id' => $image->id,
@@ -114,7 +101,7 @@ class BusinessController extends Controller
                 'is_primary' => $image->is_primary,
                 'sort_order' => $image->sort_order,
             ];
-        });
+        })->values()->all();
         
         return Response::json([
             'business' => $business
@@ -617,7 +604,7 @@ class BusinessController extends Controller
                     'is_primary' => $image->is_primary,
                     'sort_order' => $image->sort_order,
                 ];
-            });
+            })->values()->all();
         } else {
             $business->image_urls = [];
         }
