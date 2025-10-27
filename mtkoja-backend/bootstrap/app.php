@@ -18,11 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         
         $middleware->web(prepend: [
-            \App\Http\Middleware\CorsMiddleware::class,
+            \Fruitcake\Cors\HandleCors::class,
         ]);
         
         $middleware->api(prepend: [
-            \App\Http\Middleware\CorsMiddleware::class,
+            \Fruitcake\Cors\HandleCors::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
