@@ -10,16 +10,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Response;
 
 class ImageController extends Controller
 {
     /**
      * آپلود تصاویر برای کسب و کار
      */
-    public function uploadBusinessImages(Request $request, $businessId)
+    public function uploadBusinessImages(Request $request, $businessId): JsonResponse
     {
         // بررسی وجود کسب و کار
-        $business = Business::findOrFail($businessId);
+        $business = Business::query()->findOrFail($businessId);
         
         // بررسی مالکیت کسب و کار - Skip for now since user might not be authenticated
         // if ($business->user_id !== $request->user()->id) {
@@ -43,7 +45,7 @@ class ImageController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
+            return Response::json([
                 'message' => 'خطا در اعتبارسنجی',
                 'errors' => $validator->errors()
             ], 422);
@@ -91,7 +93,7 @@ class ImageController extends Controller
             }
         }
 
-        return response()->json([
+        return Response::json([
             'message' => 'تصاویر با موفقیت آپلود شدند',
             'uploaded_images' => $uploadedImages,
             'errors' => $errors,
@@ -102,9 +104,9 @@ class ImageController extends Controller
     /**
      * حذف تصویر
      */
-    public function deleteImage(Request $request, $imageId)
+    public function deleteImage(Request $request, $imageId): JsonResponse
     {
-        $image = Image::findOrFail($imageId);
+        $image = Image::query()->findOrFail($imageId);
         
         // بررسی مالکیت - Skip for now since user might not be authenticated
         // if ($image->imageable_type === Business::class) {
@@ -125,12 +127,12 @@ class ImageController extends Controller
             // حذف رکورد از دیتابیس
             $image->delete();
 
-            return response()->json([
+            return Response::json([
                 'message' => 'تصویر با موفقیت حذف شد'
             ]);
 
         } catch (\Exception $e) {
-            return response()->json([
+            return Response::json([
                 'message' => 'خطا در حذف تصویر: ' . $e->getMessage()
             ], 500);
         }
@@ -139,9 +141,9 @@ class ImageController extends Controller
     /**
      * تنظیم تصویر اصلی
      */
-    public function setPrimaryImage(Request $request, $imageId)
+    public function setPrimaryImage(Request $request, $imageId): JsonResponse
     {
-        $image = Image::findOrFail($imageId);
+        $image = Image::query()->findOrFail($imageId);
         
         // بررسی مالکیت - Skip for now since user might not be authenticated
         // if ($image->imageable_type === Business::class) {
@@ -155,7 +157,7 @@ class ImageController extends Controller
 
         try {
             // حذف تصویر اصلی قبلی
-            Image::where('imageable_id', $image->imageable_id)
+            Image::query()->where('imageable_id', $image->imageable_id)
                 ->where('imageable_type', $image->imageable_type)
                 ->where('is_primary', true)
                 ->update(['is_primary' => false]);
@@ -163,13 +165,13 @@ class ImageController extends Controller
             // تنظیم تصویر جدید به عنوان اصلی
             $image->update(['is_primary' => true]);
 
-            return response()->json([
+            return Response::json([
                 'message' => 'تصویر اصلی با موفقیت تغییر کرد',
                 'image' => $image
             ]);
 
         } catch (\Exception $e) {
-            return response()->json([
+            return Response::json([
                 'message' => 'خطا در تغییر تصویر اصلی: ' . $e->getMessage()
             ], 500);
         }
@@ -178,9 +180,9 @@ class ImageController extends Controller
     /**
      * تغییر ترتیب تصاویر
      */
-    public function reorderImages(Request $request, $businessId)
+    public function reorderImages(Request $request, $businessId): JsonResponse
     {
-        $business = Business::findOrFail($businessId);
+        $business = Business::query()->findOrFail($businessId);
         
         // بررسی مالکیت - Skip for now since user might not be authenticated
         // if ($business->user_id !== $request->user()->id) {
@@ -196,7 +198,7 @@ class ImageController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
+            return Response::json([
                 'message' => 'خطا در اعتبارسنجی',
                 'errors' => $validator->errors()
             ], 422);
@@ -204,18 +206,18 @@ class ImageController extends Controller
 
         try {
             foreach ($request->image_orders as $order) {
-                Image::where('id', $order['id'])
+                Image::query()->where('id', $order['id'])
                     ->where('imageable_id', $businessId)
                     ->where('imageable_type', Business::class)
                     ->update(['sort_order' => $order['sort_order']]);
             }
 
-            return response()->json([
+            return Response::json([
                 'message' => 'ترتیب تصاویر با موفقیت تغییر کرد'
             ]);
 
         } catch (\Exception $e) {
-            return response()->json([
+            return Response::json([
                 'message' => 'خطا در تغییر ترتیب: ' . $e->getMessage()
             ], 500);
         }
@@ -224,9 +226,9 @@ class ImageController extends Controller
     /**
      * دریافت تصاویر کسب و کار
      */
-    public function getBusinessImages($businessId)
+    public function getBusinessImages($businessId): JsonResponse
     {
-        $business = Business::findOrFail($businessId);
+        $business = Business::query()->findOrFail($businessId);
         
         $images = $business->images()
             ->ordered()
@@ -245,7 +247,7 @@ class ImageController extends Controller
                 ];
             });
 
-        return response()->json([
+        return Response::json([
             'images' => $images,
             'total' => $images->count()
         ]);

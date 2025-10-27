@@ -5,7 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Config;
 
+/**
+ * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|Image query()
+ * @method static Image findOrFail($id)
+ * @method static Image create(array $attributes = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Image where($column, $operator = null, $value = null, $boolean = 'and')
+ */
 class Image extends Model
 {
     use HasFactory;
@@ -62,7 +70,7 @@ class Image extends Model
         if (preg_match('/^https?:\/\//i', $relative)) {
             return $relative;
         }
-        $base = rtrim(config('app.url'), '/');
+        $base = rtrim(Config::get('app.url'), '/');
         return $base . $relative;
     }
 }

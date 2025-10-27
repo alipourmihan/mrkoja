@@ -9,13 +9,18 @@ use App\Models\Review;
 use App\Models\Image;
 use App\Models\View;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Response;
 
 class BusinessController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $query = Business::with(['category', 'user', 'images'])
+        $query = Business::query()->with(['category', 'user', 'images'])
             ->approved();
 
         // Filter by category
@@ -60,41 +65,41 @@ class BusinessController extends Controller
             });
             
             // Add sample images if no images exist
-            if ($business->image_urls->isEmpty()) {
+            if (empty($business->image_urls)) {
                 $sampleImages = [
                     'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop',
                     'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
                     'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop',
                 ];
                 
-                $business->image_urls = collect([
+                $business->image_urls = [
                     [
                         'id' => 0,
                         'url' => $sampleImages[array_rand($sampleImages)],
                         'is_primary' => true,
                         'sort_order' => 0,
                     ]
-                ]);
+                ];
             }
             
             return $business;
         });
 
-        return response()->json([
+        return Response::json([
             'businesses' => $businesses
         ]);
     }
 
-    public function show($identifier)
+    public function show($identifier): JsonResponse
     {
         // Try to find by ID first, then by slug
-        $business = Business::where('id', $identifier)
+        $business = Business::query()->where('id', $identifier)
             ->orWhere('slug', $identifier)
             ->with(['category', 'user', 'images'])
             ->first();
             
         if (!$business) {
-            return response()->json([
+            return Response::json([
                 'message' => 'Business not found'
             ], 404);
         }
@@ -111,12 +116,12 @@ class BusinessController extends Controller
             ];
         });
         
-        return response()->json([
+        return Response::json([
             'business' => $business
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -146,7 +151,7 @@ class BusinessController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
+            return Response::json([
                 'message' => 'Validation errors',
                 'errors' => $validator->errors()
             ], 422);
@@ -154,13 +159,13 @@ class BusinessController extends Controller
 
         // Get user ID safely - do NOT create default users
         if (!$request->user()) {
-            return response()->json([
+            return Response::json([
                 'message' => 'Authentication required'
             ], 401);
         }
         $userId = $request->user()->id;
 
-        $business = Business::create([
+        $business = Business::query()->create([
             'user_id' => $userId,
             'category_id' => $request->category_id,
             'name' => $request->name,
@@ -196,17 +201,17 @@ class BusinessController extends Controller
             \Log::warning('Failed to load business relationships: ' . $e->getMessage());
         }
 
-        return response()->json([
+        return Response::json([
             'message' => 'Business created successfully',
             'business' => $business
         ], 201);
     }
 
-    public function update(Request $request, Business $business)
+    public function update(Request $request, Business $business): JsonResponse
     {
         // Check if user owns this business
         if ($business->user_id !== $request->user()->id) {
-            return response()->json([
+            return Response::json([
                 'message' => 'Unauthorized'
             ], 403);
         }
@@ -232,7 +237,7 @@ class BusinessController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
+            return Response::json([
                 'message' => 'Validation errors',
                 'errors' => $validator->errors()
             ], 422);
@@ -260,23 +265,23 @@ class BusinessController extends Controller
 
         $business->load(['category', 'user']);
 
-        return response()->json([
+        return Response::json([
             'message' => 'Business updated successfully',
             'business' => $business
         ]);
     }
 
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
-        $business = Business::findOrFail($id);
+        $business = Business::query()->findOrFail($id);
         $business->delete();
 
-        return response()->json([
+        return Response::json([
             'message' => 'Business deleted successfully'
         ]);
     }
 
-    public function myBusinesses(Request $request)
+    public function myBusinesses(Request $request): JsonResponse
     {
         try {
             // Get user ID safely
@@ -291,7 +296,7 @@ class BusinessController extends Controller
                 }
             }
 
-            $query = Business::with(['category', 'images'])
+            $query = Business::query()->with(['category', 'images'])
                 ->where('user_id', $userId);
 
             // Filter by status
@@ -325,22 +330,22 @@ class BusinessController extends Controller
                 return $business;
             });
 
-            return response()->json([
+            return Response::json([
                 'businesses' => $businesses
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error fetching user businesses: ' . $e->getMessage());
-            return response()->json([
+            Log::error('Error fetching user businesses: ' . $e->getMessage());
+            return Response::json([
                 'message' => 'Error fetching businesses',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
 
-    public function adminIndex(Request $request)
+    public function adminIndex(Request $request): JsonResponse
     {
         try {
-            $query = Business::with(['category', 'user', 'images']);
+            $query = Business::query()->with(['category', 'user', 'images']);
 
             // Filter by status
             if ($request->has('status')) {
@@ -379,41 +384,41 @@ class BusinessController extends Controller
                 return $business;
             });
 
-            return response()->json([
+            return Response::json([
                 'businesses' => $businesses
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error fetching businesses for admin: ' . $e->getMessage());
-            return response()->json([
+            Log::error('Error fetching businesses for admin: ' . $e->getMessage());
+            return Response::json([
                 'message' => 'Error fetching businesses',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
 
-    public function approve($id)
+    public function approve($id): JsonResponse
     {
-        $business = Business::findOrFail($id);
+        $business = Business::query()->findOrFail($id);
         $business->update(['status' => 'approved']);
 
-        return response()->json([
+        return Response::json([
             'message' => 'Business approved successfully',
             'business' => $business
         ]);
     }
 
-    public function reject($id)
+    public function reject($id): JsonResponse
     {
-        $business = Business::findOrFail($id);
+        $business = Business::query()->findOrFail($id);
         $business->update(['status' => 'rejected']);
 
-        return response()->json([
+        return Response::json([
             'message' => 'Business rejected successfully',
             'business' => $business
         ]);
     }
 
-    public function adminStore(Request $request)
+    public function adminStore(Request $request): JsonResponse
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -443,16 +448,16 @@ class BusinessController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
+                return Response::json([
                     'message' => 'Validation failed',
                     'errors' => $validator->errors()
                 ], 422);
             }
 
             // Validate category exists
-            $category = \App\Models\Category::find($request->category_id);
+            $category = Category::query()->find($request->category_id);
             if (!$category) {
-                return response()->json([
+                return Response::json([
                     'message' => 'Category not found',
                     'error' => 'Invalid category_id'
                 ], 404);
@@ -470,18 +475,18 @@ class BusinessController extends Controller
                     $defaultUser = \App\Models\User::create([
                         'name' => 'Default User',
                         'email' => 'default@example.com',
-                        'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                        'password' => Hash::make('password'),
                         'role' => 'admin'
                     ]);
                 }
                 $userId = $defaultUser->id;
             }
 
-            $business = Business::create([
+            $business = Business::query()->create([
                 'user_id' => $userId,
                 'category_id' => $request->category_id,
                 'name' => $request->name,
-                'slug' => \Illuminate\Support\Str::slug($request->name),
+                'slug' => Str::slug($request->name),
                 'description' => $request->description,
                 'full_description' => $request->fullDescription ?? $request->description,
                 'address' => $request->address ?? '',
@@ -513,36 +518,36 @@ class BusinessController extends Controller
                 \Log::warning('Failed to load business relationships: ' . $e->getMessage());
             }
 
-            return response()->json([
+            return Response::json([
                 'message' => 'Business created successfully',
                 'business' => $business
             ], 201);
             
         } catch (\Exception $e) {
-            \Log::error('Error creating business: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            Log::error('Error creating business: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
             
-            return response()->json([
+            return Response::json([
                 'message' => 'Error creating business: ' . $e->getMessage(),
                 'error' => $e->getMessage()
             ], 500);
         }
     }
 
-    public function adminShow($id)
+    public function adminShow($id): JsonResponse
     {
-        $business = Business::with(['category', 'user', 'images'])
+        $business = Business::query()->with(['category', 'user', 'images'])
             ->findOrFail($id);
 
         // Add image URLs
         $business = $this->addImageUrls($business);
 
-        return response()->json([
+        return Response::json([
             'business' => $business
         ]);
     }
 
-    public function adminUpdate(Request $request, $id)
+    public function adminUpdate(Request $request, $id): JsonResponse
     {
         $business = Business::findOrFail($id);
 
@@ -561,7 +566,7 @@ class BusinessController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
+            return Response::json([
                 'message' => 'Validation failed',
                 'errors' => $validator->errors()
             ], 422);
@@ -575,13 +580,13 @@ class BusinessController extends Controller
         // Add image URLs
         $business = $this->addImageUrls($business);
 
-        return response()->json([
+        return Response::json([
             'message' => 'Business updated successfully',
             'business' => $business
         ]);
     }
 
-    public function stats()
+    public function stats(): JsonResponse
     {
         // For testing purposes, return dummy stats
         $stats = [
@@ -594,7 +599,7 @@ class BusinessController extends Controller
             'active_categories' => 0,
         ];
 
-        return response()->json([
+        return Response::json([
             'stats' => $stats
         ]);
     }

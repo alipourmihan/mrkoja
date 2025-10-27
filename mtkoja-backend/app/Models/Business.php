@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|Business query()
+ * @method static Business findOrFail($id)
+ * @method static \Illuminate\Database\Eloquent\Builder|Business with($relations)
+ */
 class Business extends Model
 {
     use HasFactory;

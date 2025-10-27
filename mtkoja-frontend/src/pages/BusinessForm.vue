@@ -30,7 +30,7 @@
     </div>
 
     <!-- Main Form Container -->
-    <div class="container mx-auto px-4 py-8">
+    <form class="container mx-auto px-4 py-8" enctype="multipart/form-data" @submit.prevent="submitForm">
       <!-- Loading State for Edit Mode -->
       <div v-if="isEditMode && loading" class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8 text-center">
         <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mb-4"></div>
@@ -82,8 +82,8 @@
                   <p class="font-medium text-red-700 mb-2">✗ مثال نامناسب:</p>
                   <p class="text-sm">انجام کلیه خدمات ناخن و رنگ مو</p>
                   <p class="text-sm">🍕 بهترین پیتزای منطقه!!</p>
-                </div>
-              </div>
+      </div>
+    </form>
             </div>
           </div>
 
