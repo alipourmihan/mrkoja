@@ -1,7 +1,11 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-const API_BASE_URL = 'https://api.mrkoja.com/api'
+const isLocal = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1');
+export const API_BASE_URL = isLocal
+  ? 'http://127.0.0.1:8000/api'
+  : 'https://api.mrkoja.com/api';
+
 
 // AUTH-INIT-GUARD-001: Ensure axios has Authorization header on page reload if token exists
 const persistedToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null
