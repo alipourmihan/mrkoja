@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست سیستم SEO متکوجا</title>
+    <style>
+        body {
+            font-family: 'Tahoma', Arial, sans-serif;
+            direction: rtl;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+        .warning { color: #ffc107; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .result {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .link-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        .link-card a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .link-card a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 تست سیستم SEO متکوجا</h1>
+            <p>بررسی عملکرد API ها و پنل ادمین</p>
+        </div>
+
+        <div class="test-section">
+            <h2>🚀 تست‌های API</h2>
+            <button onclick="testDashboard()">تست داشبورد SEO</button>
+            <button onclick="testPages()">تست لیست صفحات</button>
+            <button onclick="testSitemap()">تست تولید Sitemap</button>
+            <button onclick="testRobots()">تست تولید robots.txt</button>
+            <button onclick="testStats()">تست آمار SEO</button>
+            <button onclick="testAll()">تست همه</button>
+            
+            <div id="testResults" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 لینک‌های دسترسی</h2>
+            <div class="links">
+                <div class="link-card">
+                    <h3>🎛️ پنل ادمین SEO</h3>
+                    <p>رابط کاربری کامل برای مدیریت SEO</p>
+                    <a href="/admin/seo" target="_blank">باز کردن پنل ادمین</a>
+                </div>
+                
+                <div class="link-card">
+                    <h3>📈 داشبورد API</h3>
+                    <p>آمار و اطلاعات کلی SEO</p>
+                    <a href="/api/admin/seo/dashboard" target="_blank">مشاهده API</a>
+                </div>
+                
+                <div class="link-card">
+                    <h3>📄 لیست صفحات</h3>
+                    <p>فهرست تمام صفحات SEO</p>
+                    <a href="/api/admin/seo/pages" target="_blank">مشاهده API</a>
+                </div>
+                
+                <div class="link-card">
+                    <h3>🗺️ تولید Sitemap</h3>
+                    <p>تولید فایل sitemap.xml</p>
+                    <a href="/api/seo/sitemap/generate" target="_blank">تولید Sitemap</a>
+                </div>
+                
+                <div class="link-card">
+                    <h3>🤖 تولید robots.txt</h3>
+                    <p>تولید فایل robots.txt</p>
+                    <a href="/api/seo/robots/generate" target="_blank">تولید robots.txt</a>
+                </div>
+                
+                <div class="link-card">
+                    <h3>📊 آمار SEO</h3>
+                    <p>آمار کلی سیستم SEO</p>
+                    <a href="/api/seo/stats" target="_blank">مشاهده آمار</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>ℹ️ راهنمای استفاده</h2>
+            <ol>
+                <li><strong>پنل ادمین:</strong> برای مدیریت کامل SEO از پنل ادمین استفاده کنید</li>
+                <li><strong>API ها:</strong> برای دسترسی برنامه‌نویسی از API ها استفاده کنید</li>
+                <li><strong>تست:</strong> دکمه‌های تست را برای بررسی عملکرد استفاده کنید</li>
+                <li><strong>مشکلات:</strong> در صورت بروز مشکل، لاگ‌ها را بررسی کنید</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h2>🔧 عیب‌یابی</h2>
+            <p>اگر مشکلی دارید:</p>
+            <ul>
+                <li>مطمئن شوید سرور Laravel در حال اجرا است</li>
+                <li>Migration ها را اجرا کرده باشید</li>
+                <li>فایل‌های .env را بررسی کنید</li>
+                <li>لاگ‌های Laravel را چک کنید</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = '/api';
+        
+        async function testApi(url, method = 'GET') {
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                return {
+                    success: response.ok,
+                    status: response.status,
+                    data: data
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    status: 0,
+                    error: error.message
+                };
+            }
+        }
+        
+        function showResult(testName, result) {
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.style.display = 'block';
+            
+            let resultText = resultsDiv.textContent;
+            resultText += `\n=== ${testName} ===\n`;
+            
+            if (result.success) {
+                resultText += `✅ موفق - کد: ${result.status}\n`;
+                resultText += `📊 داده: ${JSON.stringify(result.data, null, 2)}\n`;
+            } else {
+                resultText += `❌ خطا - کد: ${result.status}\n`;
+                if (result.error) {
+                    resultText += `🔴 پیام خطا: ${result.error}\n`;
+                }
+            }
+            
+            resultText += '\n';
+            resultsDiv.textContent = resultText;
+        }
+        
+        async function testDashboard() {
+            const result = await testApi(`${baseUrl}/admin/seo/dashboard`);
+            showResult('داشبورد SEO', result);
+        }
+        
+        async function testPages() {
+            const result = await testApi(`${baseUrl}/admin/seo/pages`);
+            showResult('لیست صفحات', result);
+        }
+        
+        async function testSitemap() {
+            const result = await testApi(`${baseUrl}/seo/sitemap/generate`);
+            showResult('تولید Sitemap', result);
+        }
+        
+        async function testRobots() {
+            const result = await testApi(`${baseUrl}/seo/robots/generate`);
+            showResult('تولید robots.txt', result);
+        }
+        
+        async function testStats() {
+            const result = await testApi(`${baseUrl}/seo/stats`);
+            showResult('آمار SEO', result);
+        }
+        
+        async function testAll() {
+            document.getElementById('testResults').textContent = '🔄 در حال تست همه API ها...\n';
+            document.getElementById('testResults').style.display = 'block';
+            
+            await testDashboard();
+            await testPages();
+            await testSitemap();
+            await testRobots();
+            await testStats();
+            
+            document.getElementById('testResults').textContent += '\n✅ تست همه API ها تکمیل شد!';
+        }
+        
+        // تست خودکار هنگام بارگذاری صفحه
+        window.onload = function() {
+            console.log('صفحه تست SEO بارگذاری شد');
+            console.log('برای تست API ها از دکمه‌ها استفاده کنید');
+        };
+    </script>
+</body>
+</html>
+
