@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class VendorInfo extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'language_id',
+        'name',
+        'shop_name',
+        'country',
+        'city',
+        'state',
+        'zip_code',
+        'address',
+        'details'
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+}
